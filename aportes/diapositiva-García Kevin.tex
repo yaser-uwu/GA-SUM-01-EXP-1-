@@ -1,150 +1,38 @@
-\documentclass[aspectratio=169]{beamer}
-\usepackage[T1]{fontenc}
-\usepackage{tikz}
-\usetikzlibrary{arrows.meta}
-\setbeamertemplate{navigation symbols}{}
-\definecolor{papel}{HTML}{F7F5EF}
-\definecolor{tinta}{HTML}{192A34}
-\definecolor{gris}{HTML}{4B5C65}
-\definecolor{verde}{HTML}{00665B}
-\definecolor{ocre}{HTML}{934219}
-\definecolor{regla}{HTML}{CDD2CB}
-\definecolor{codigo}{HTML}{EAEFEA}
-\setbeamercolor{background canvas}{bg=papel}
-
-% Coordenadas compartidas en centímetros para una página Beamer de 16 × 9.
-\newenvironment{lienzo}{%
-  \begin{tikzpicture}[remember picture,overlay,x=1cm,y=-1cm]
-  \begin{scope}[shift={(current page.north west)}]
-  \tikzset{
-    txt/.style={anchor=north west,inner sep=0pt,text=tinta,align=left},
-    mono/.style={txt,font=\ttfamily},
-    flecha/.style={draw=verde,line width=.85pt,-{Stealth[length=2.1mm]}}
-  }
-}{%
-  \end{scope}
-  \end{tikzpicture}
-}
-\newcommand{\cabecera}[3]{%
-  \fill[#1] (.85,.62) rectangle (.97,1);
-  \node[txt,text=#1,font=\bfseries\small] at (1.12,.68) {#2};
-  \node[txt,font=\bfseries\LARGE] at (.85,1.27) {#3};
-  \draw[regla] (.85,2.38)--(15.15,2.38);
-}
-\newcommand{\pie}[1]{%
-  \draw[regla] (.85,8.18)--(15.15,8.18);
-  \node[txt,text=gris,font=\small] at (.85,8.45) {#1};
-  \node[txt,text=gris,font=\small,anchor=north east] at (15.15,8.45) {\insertframenumber};
-}
-\newcommand{\bloque}[5]{%
-  \node[txt,text=#1,font=\bfseries\large] at (#2,#3) {#4};
-  \node[txt,text width=6.55cm,font=\normalsize] at (#2,{#3+.60}) {#5};
-}
-\newcommand{\etiqueta}[4]{%
-  \node[txt,text=#1,font=\small\bfseries] at (#2,#3) {#4};
-}
+\documentclass[aspectratio=169,11pt]{beamer}
+\input{estilo.tex}
+\addbibresource{../referencias/referencias-kevin.bib}
+\IfFileExists{../referencias/referencias-khriz.bib}{\addbibresource{../referencias/referencias-khriz.bib}}{}
+\IfFileExists{../referencias/referencias-joseph.bib}{\addbibresource{../referencias/referencias-joseph.bib}}{}
+\IfFileExists{../referencias/referencias-juliana.bib}{\addbibresource{../referencias/referencias-juliana.bib}}{}
 \begin{document}
-
+\begingroup
+\setbeamercolor{background canvas}{bg=tinta}
+\setbeamercolor{normal text}{fg=white}
 \begin{frame}[plain,noframenumbering]
-\begin{lienzo}
-\fill[tinta] (0,0) rectangle (16,9);
-\fill[verde] (.94,1.13) rectangle (2.53,1.27);
-\fill[ocre] (2.63,1.13) rectangle (3.55,1.27);
-\node[txt,text=white,font=\small\bfseries] at (.94,1.65) {EXPOSICIÓN DEL PRIMER CORTE · GA-SUM-02 / EXP-1};
-\node[txt,text=white,font=\bfseries\fontsize{29}{34}\selectfont] at (.90,2.45) {Servicios web};
-\node[txt,text=white,font=\bfseries\LARGE] at (.94,3.87) {SOAP y REST};
-\node[txt,text=white,font=\large] at (.94,4.69) {Análisis de un sistema distribuido real};
-\draw[white,opacity=.4] (.94,5.86)--(15.06,5.86);
-\node[txt,text=white,font=\small\bfseries] at (.94,6.15) {Integrantes · Grupo CCEG};
-\node[txt,text=white,font=\small] at (.94,6.65) {Calderon Saltos Joseph Alexander\\
-Coronel Gomez Khriz Alexander\\
-Emanuel Pino Juliana Romina\\
-Garcia Bazurto Kevin Leonel};
-\node[txt,text=white,font=\small\bfseries] at (9.2,6.15) {Docente};
-\node[txt,text=white,font=\small] at (9.2,6.65) {Guerrero Ulloa Gleiston Ciceron};
-\node[txt,text=white,font=\small\bfseries] at (9.2,7.24) {Aplicaciones Distribuidas};
-\node[txt,text=white,font=\small] at (9.2,7.71) {7.º nivel · Paralelo A};
-\node[txt,text=white,font=\small] at (9.2,8.31) {16 de noviembre de 2026};
-\end{lienzo}
+\vspace{5mm}
+{\color{suave}\small APLICACIONES DISTRIBUIDAS · GA-SUM-01 / EXP-1}\par
+\vspace{8mm}
+{\color{white}\fontsize{34}{38}\selectfont\bfseries Servicios web}\par
+\vspace{2mm}
+{\color{white}\fontsize{27}{31}\selectfont SOAP y REST}\par
+\vspace{5mm}
+{\color{suave}\large Aplicación a la evolución de nuestros PFC}\par
+\vfill
+{\color{white}\small\bfseries Grupo CCEG}\par\smallskip
+{\color{white}\footnotesize Kevin Leonel García Bazurto · Khriz Alexander Coronel Gomez\par
+Joseph Alexander Calderon Saltos · Juliana Romina Emanuel Pino}\par
+\vspace{5mm}
 \end{frame}
-
-
-
-\begin{frame}[plain]
-\begin{lienzo}
-\cabecera{verde}{TEORÍA}{Fundamentos de los servicios web y SOAP}
-\node[txt,text width=14cm,font=\large] at (.85,2.75) {Un servicio web permite que aplicaciones con tecnologías distintas intercambien información a través de una red.};
-\draw[flecha] (3.82,4.27)--(12.02,4.27);
-\draw[flecha] (12.02,5.06)--(3.82,5.06);
-\node[txt,font=\bfseries\Large] at (.85,4.41) {Cliente};
-\node[txt,font=\bfseries\Large,anchor=north east] at (15.15,4.41) {Servidor};
-\node[txt,anchor=south,font=\small] at (8,4.15) {Solicitud};
-\node[txt,anchor=north,font=\small] at (8,5.18) {Respuesta};
-\bloque{ocre}{.85}{6.05}{SOAP · Protocolo de mensajería}{Intercambia mensajes estructurados en XML dentro de un sobre (\textit{Envelope}).}
-\bloque{ocre}{8.45}{6.05}{WSDL · Contrato del servicio}{Describe qué operaciones ofrece el servicio y cómo acceder a ellas.}
-\pie{Fuentes · W3C, SOAP 1.2 y WSDL 2.0}
-\end{lienzo}
+\endgroup
+\input{kevin.tex}
+\IfFileExists{khriz.tex}{\input{khriz.tex}}{}
+\IfFileExists{joseph.tex}{\input{joseph.tex}}{}
+\IfFileExists{juliana.tex}{\input{juliana.tex}}{}
+\begin{frame}[allowframebreaks,noframenumbering]{Referencias}
+\footnotesize\printbibliography[heading=none]
 \end{frame}
-
-\begin{frame}[plain]
-\begin{lienzo}
-\cabecera{verde}{TEORÍA}{REST y sus diferencias con SOAP}
-\node[txt,text width=14cm,font=\large] at (.85,2.76) {REST es un estilo arquitectónico para sistemas distribuidos.};
-\draw[regla] (8,3.55)--(8,7.60);
-\bloque{verde}{.85}{3.61}{Los recursos en REST}{La URI identifica el recurso. HTTP ofrece métodos como GET, POST, PUT y DELETE.}
-\bloque{verde}{.85}{6.03}{Cada solicitud trae su contexto}{REST separa cliente y servidor. Cada solicitud lleva la información necesaria para procesarla.}
-\bloque{ocre}{8.45}{3.61}{Mensajes y formatos}{SOAP usa mensajes XML. REST admite representaciones como JSON y XML.}
-\bloque{ocre}{8.45}{6.03}{Contrato y acceso}{WSDL es habitual en SOAP. En REST, el método HTTP y la URI indican qué se pide y sobre qué recurso.}
-\pie{Fuentes · Fielding (2000), REST. IETF, RFC 9110 (2022).}
-\end{lienzo}
+\begin{frame}[noframenumbering]{Uso de inteligencia artificial}
+\tema{Kevin García}
+Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para ayudarme a preparar y revisar la redacción de las notas, el diseño de la propuesta.
 \end{frame}
-
-\begin{frame}[plain]
-\begin{lienzo}
-\cabecera{verde}{EJERCICIO EN POSTMAN}{REST lee el ID de la URL}
-\fill[codigo] (.85,2.88) rectangle (7.55,6.91);
-\fill[codigo] (8.06,2.88) rectangle (15.15,6.91);
-\etiqueta{verde}{1.13}{3.2}{SOLICITUD · SIN CUERPO}
-\etiqueta{verde}{8.35}{3.2}{RESPUESTA · 200 OK · JSON}
-\node[mono] at (1.13,3.92) {GET /api/practica/ordenes/\textcolor{verde}{\textbf{2}}};
-\node[mono] at (8.35,3.92) {\{\\
-\quad "idOrden": 2,\\
-\quad "estadoOrden": "PENDIENTE",\\
-\quad "total": 47.50\\
-\}};
-\node[txt,text width=13.9cm] at (.85,7.24) {\textbf{En Java} \enspace \texttt{@PathVariable} toma el identificador de la ruta.};
-\pie{Orden 2 de papelería · JSON sencillo de consumir desde el frontend}
-\end{lienzo}
-\end{frame}
-
-\begin{frame}[plain]
-\begin{lienzo}
-\cabecera{ocre}{EJERCICIO EN POSTMAN}{SOAP lee el ID del cuerpo XML}
-\fill[codigo] (.85,2.88) rectangle (7.55,6.15);
-\fill[codigo] (8.06,2.88) rectangle (15.15,6.15);
-\etiqueta{ocre}{1.13}{3.17}{SOLICITUD · POST /ws}
-\etiqueta{ocre}{8.35}{3.17}{RESPUESTA · 200 OK}
-\node[mono,font=\ttfamily\small] at (1.13,3.78) {\textless oc:ConsultarOrdenRequest\textgreater\\
-\quad\textless oc:idOrden\textgreater\textcolor{ocre}{\textbf{2}}\textless/oc:idOrden\textgreater\\
-\textless/oc:ConsultarOrdenRequest\textgreater};
-\node[mono,font=\ttfamily\small] at (8.35,3.78) {\textless idOrden\textgreater2\textless/idOrden\textgreater\\
-\textless estadoOrden\textgreater PENDIENTE\textless/estadoOrden\textgreater\\
-\textless total\textgreater47.50\textless/total\textgreater};
-\node[txt,text width=14cm] at (.85,6.49) {\textbf{En Java} \enspace Ambos métodos llaman a \texttt{ordenCompraService.obtener(id)}.};
-\node[txt,text width=14cm] at (.85,7.22) {\textbf{Decisión} \enspace REST para el frontend. SOAP si la integración necesita WSDL.};
-\pie{Extractos del cuerpo de la solicitud y del cuerpo de la respuesta SOAP}
-\end{lienzo}
-\end{frame}
-
-\begin{frame}[plain]
-\begin{lienzo}
-\fill[tinta] (0,0) rectangle (16,9);
-\fill[verde] (.95,1.22) rectangle (2.65,1.32);
-\node[txt,text=white,font=\bfseries\Huge] at (.95,2.20) {Gracias};
-\node[txt,text=white,font=\large] at (.95,3.57) {SOAP y REST};
-\draw[white,opacity=.35] (.95,6.15)--(15.05,6.15);
-\node[txt,text=white,font=\normalsize] at (.95,6.62) {Pendientes: arquitectura y análisis del incidente};
-\end{lienzo}
-\end{frame}
-
 \end{document}

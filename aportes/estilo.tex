@@ -1,0 +1,33 @@
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{lmodern}
+\usepackage{csquotes}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage[backend=biber,style=ieee,url=false,isbn=false]{biblatex}
+\definecolor{fondo}{HTML}{F6F5F0}
+\definecolor{tinta}{HTML}{132F3A}
+\definecolor{acento}{HTML}{087E81}
+\definecolor{suave}{HTML}{DFEEEB}
+\definecolor{gris}{HTML}{52616A}
+\definecolor{borde}{HTML}{CDD8D6}
+\definecolor{ambar}{HTML}{98642C}
+\setbeamercolor{normal text}{fg=tinta,bg=fondo}
+\setbeamercolor{background canvas}{bg=fondo}
+\setbeamercolor{structure}{fg=acento}
+\setbeamercolor{frametitle}{fg=tinta,bg=fondo}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{author}{fg=white}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{acento}\small\textbullet}
+\setbeamersize{text margin left=9mm,text margin right=9mm}
+\setbeamerfont{frametitle}{size=\LARGE,series=\bfseries}
+\setbeamerfont{normal text}{size=\normalsize}
+\setbeamertemplate{frametitle}{\vspace{3mm}\insertframetitle\par\vspace{1.5mm}{\color{borde}\hrule}\vspace{1mm}}
+\setbeamertemplate{footline}{\hspace{9mm}\color{gris}\scriptsize Servicios web: SOAP y REST\hfill Grupo CCEG\hspace{4mm}\insertframenumber\hspace{9mm}\vspace{3mm}}
+\newcommand{\tema}[1]{{\color{acento}\small\bfseries #1}\par\medskip}
+\newcommand{\kgnota}[1]{{\color{gris}\footnotesize #1}\par}
+\hypersetup{colorlinks=true,linkcolor=acento,urlcolor=acento,citecolor=acento}
+
+\setbeamertemplate{frametitle continuation}{}
