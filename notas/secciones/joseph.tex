@@ -1,7 +1,39 @@
 \subsection{Verificación externa propuesta mediante SOAP}
 
-El PFC plantea un sistema para organizar historiales médicos y citas. En el alcance definido hasta ahora no consta una integración implementada con un proveedor externo; por eso, el flujo descrito aquí es una propuesta futura.
+El PFC plantea un sistema para organizar historiales médicos y citas. Hasta ahora no se ha definido una integración real con un proveedor externo; por eso, este flujo es una propuesta futura.
 
-Como escenario, el sistema podría consultar a un proveedor hipotético si una cobertura médica está vigente. El PFC actuaría como cliente y enviaría una solicitud SOAP en XML con un identificador de cobertura de prueba y la fecha de consulta. No se usarían datos personales reales.
+Como escenario, el sistema consultaría a un proveedor si una cobertura médica está vigente. El PFC actuaría como cliente y enviaría una solicitud SOAP en XML con un identificador de prueba y una fecha de consulta. No se usarían datos personales reales.
 
-SOAP sería una opción si el proveedor ofreciera la operación mediante un contrato WSDL. Ese contrato permitiría conocer las operaciones disponibles, los mensajes y los tipos esperados. La respuesta indicaría si la cobertura está vigente para que el sistema muestre el resultado al usuario. Esta comunicación todavía no está implementada ni comprobada con un proveedor real.
+SOAP sería una opción si el proveedor ofreciera la operación mediante un contrato WSDL. Ese contrato tendría que definir las operaciones, los mensajes y los tipos de datos que se intercambiarían. La respuesta indicaría si la cobertura está vigente para que el sistema muestre el resultado al usuario. Esta comunicación todavía no está implementada ni comprobada con un proveedor real.
+
+Para detectar una demora, el cliente definiría un tiempo máximo de espera para la operación SOAP. Si se cumple ese tiempo sin recibir respuesta, registraría que la consulta venció y avisaría que el proveedor no respondió. Si la conexión falla, informaría que no fue posible completar la consulta. En ninguno de esos casos marcaría la cobertura como vencida, porque no recibió una respuesta válida. Este comportamiento es una propuesta; todavía no está implementado ni probado.
+
+\paragraph{Intercambio XML propuesto.}
+La solicitud y la respuesta siguientes son ejemplos. El identificador, la fecha, el nombre de la operación, los campos y el espacio de nombres son ilustrativos; el WSDL de un proveedor real tendría que definirlos.
+
+\textbf{Solicitud propuesta:}
+\begin{verbatim}
+<env:Envelope
+    xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:cov="urn:propuesta:cobertura">
+  <env:Body>
+    <cov:ConsultarCobertura>
+      <cov:idCobertura>TEST-001</cov:idCobertura>
+      <cov:fechaConsulta>2026-11-20</cov:fechaConsulta>
+    </cov:ConsultarCobertura>
+  </env:Body>
+</env:Envelope>
+\end{verbatim}
+
+\textbf{Respuesta posible:}
+\begin{verbatim}
+<env:Envelope
+    xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:cov="urn:propuesta:cobertura">
+  <env:Body>
+    <cov:ConsultarCoberturaResponse>
+      <cov:vigente>true</cov:vigente>
+    </cov:ConsultarCoberturaResponse>
+  </env:Body>
+</env:Envelope>
+\end{verbatim}
