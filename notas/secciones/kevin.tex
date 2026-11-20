@@ -30,5 +30,12 @@ REST se propone para consultar un recurso identificado mediante HTTP y devolver 
 
 SOAP se consideraría cuando una integración requiera operaciones descritas mediante WSDL y mensajes SOAP. Para la consulta planteada, se propone una interfaz HTTP con recursos identificados y respuestas JSON.
 
+\subsection{Demostración de consulta con autorización}
+La demostración utiliza el backend Spring Boot y PostgreSQL del RTV. Un cliente externo inicia sesión y envía \texttt{GET /api/consulta/turnos/82}. El backend obtiene el usuario de la sesión y comprueba en PostgreSQL la vinculación entre esa cuenta, el propietario y el turno. La cuenta no puede elegir el propietario mediante un parámetro de la petición.
+
+La consulta del turno propio devuelve \texttt{200 OK} y los campos \texttt{turnoId}, \texttt{estado}, \texttt{fechaInicio} y \texttt{fechaFin}. Un turno ajeno o inexistente recibe el mismo \texttt{404}. Sin sesión se obtiene \texttt{401}; el intento de usar las rutas internas del personal devuelve \texttt{403} al solicitante. El acceso del personal autorizado se comprobó mediante su ruta interna y devolvió \texttt{200}.
+
+Se prepararon una cuenta, un propietario y un turno ficticios para la prueba. Se conservaron las peticiones, las respuestas HTTP y las capturas, y pasaron diez pruebas automatizadas. Las fechas devueltas corresponden al turno. La cola de eventos, el servicio de lectura independiente y la propagación hacia su base corresponden a la arquitectura propuesta.
+
 \subsection{Uso de inteligencia artificial}
 Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para organizar y revisar la redacción de las notas y el diseño de la propuesta a partir del bosquejo de consulta de turnos.
