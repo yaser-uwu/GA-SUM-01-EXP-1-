@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram name="REST consulta RTV">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" page="1" pageWidth="1654" pageHeight="1169">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Consulta de turnos RTV mediante REST — evolución propuesta" vertex="1" parent="1" style="text;strokeColor=none;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="80" y="20" width="1450" height="60" />
+        </mxCell>
+        <mxCell id="staff" value="Web del personal&#10;Cliente" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="80" y="150" width="250" height="100" />
+        </mxCell>
+        <mxCell id="backend" value="Backend RTV&#10;Turnos y pagos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="530" y="150" width="250" height="100" />
+        </mxCell>
+        <mxCell id="main" value="Base principal&#10;Turnos + bandeja de salida&#10;Misma transacción" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="1120" y="140" width="320" height="130" />
+        </mxCell>
+        <mxCell id="publisher" value="Publicador de eventos&#10;Lee la bandeja de salida" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="1120" y="370" width="320" height="100" />
+        </mxCell>
+        <mxCell id="queue" value="Cola de mensajes&#10;Cambios confirmados" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="530" y="370" width="250" height="100" />
+        </mxCell>
+        <mxCell id="consumer" value="Consumidor de eventos&#10;Control de ID y versión" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="530" y="590" width="250" height="100" />
+        </mxCell>
+        <mxCell id="read" value="Base de lectura&#10;Proyección de turnos" vertex="1" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="1120" y="770" width="320" height="130" />
+        </mxCell>
+        <mxCell id="api" value="Servicio REST de consulta&#10;Identidad y autorización" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="530" y="770" width="280" height="130" />
+        </mxCell>
+        <mxCell id="client" value="App del solicitante&#10;Cliente externo propuesto" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=17;align=center;verticalAlign=middle;spacing=10;">
+          <mxGeometry as="geometry" x="80" y="770" width="280" height="130" />
+        </mxCell>
+        <mxCell id="e1" value="Crear o modificar turno&#10;HTTP + JSON" edge="1" parent="1" source="staff" target="backend" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e2" value="Guardar cambio + evento" edge="1" parent="1" source="backend" target="main" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e3" value="Leer eventos confirmados" edge="1" parent="1" source="main" target="publisher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e4" value="Publicar evento" edge="1" parent="1" source="publisher" target="queue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e5" value="Entregar evento" edge="1" parent="1" source="queue" target="consumer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e6" value="Actualizar proyección&#10;Ignorar duplicados y versiones antiguas" edge="1" parent="1" source="consumer" target="read" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e7" value="GET /api/turnos/123" edge="1" parent="1" source="client" target="api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;entryX=0;entryY=0.25;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e8" value="200 OK + JSON&#10;Estado + fecha de actualización" edge="1" parent="1" source="api" target="client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.8;entryX=1;entryY=0.8;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e9" value="Consulta autorizada por ID" edge="1" parent="1" source="api" target="read" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;entryX=0;entryY=0.25;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="e10" value="Datos de la proyección" edge="1" parent="1" source="read" target="api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=0;endArrow=block;strokeColor=#000000;fontColor=#000000;fontSize=14;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.8;entryX=1;entryY=0.8;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
