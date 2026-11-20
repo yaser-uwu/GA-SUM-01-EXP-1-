@@ -26,6 +26,8 @@ Ante una partición que interrumpa la propagación de eventos, el servicio de co
 Sin partición, PACELC permite analizar el equilibrio entre la latencia y la consistencia. La propuesta evita que cada consulta espere la propagación de todos los cambios y acepta un posible retraso del modelo de lectura. El tiempo de propagación y la latencia de consulta se evaluarían mediante mediciones.
 
 \subsection{Criterio para elegir REST}
+Lercher et al. describen el uso de REST con JSON en los servicios estudiados y señalan la necesidad de definir las estructuras de petición y respuesta~\cite[sec.~3.2.1]{lercher_microservice_2024}. En el RTV, este criterio se aplica al contrato de consulta del turno: una ruta definida, campos de respuesta conocidos y comprobación del acceso del solicitante.
+
 REST se propone para consultar un recurso identificado mediante HTTP y devolver su representación en JSON. La consulta no modifica el turno y permite integrar una aplicación cliente independiente. La cola de mensajes se utilizaría para propagar los cambios internos hacia la base de lectura.
 
 SOAP se consideraría cuando una integración requiera operaciones descritas mediante WSDL y mensajes SOAP. Para la consulta planteada, se propone una interfaz HTTP con recursos identificados y respuestas JSON.
@@ -38,4 +40,4 @@ La consulta del turno propio devuelve \texttt{200 OK} y los campos \texttt{turno
 Se prepararon una cuenta, un propietario y un turno ficticios para la prueba. Se conservaron las peticiones, las respuestas HTTP y las capturas, y pasaron diez pruebas automatizadas. Las fechas devueltas corresponden al turno. La cola de eventos, el servicio de lectura independiente y la propagación hacia su base corresponden a la arquitectura propuesta.
 
 \subsection{Uso de inteligencia artificial}
-Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para organizar y revisar la redacción de las notas y el diseño de la propuesta a partir del bosquejo de consulta de turnos.
+Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para ayudarme a preparar y revisar la redacción de las notas, el diseño de la propuesta.
