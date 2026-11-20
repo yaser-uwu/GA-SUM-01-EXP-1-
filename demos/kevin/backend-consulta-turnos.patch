@@ -1,0 +1,344 @@
+diff --git a/backend/src/main/java/com/revisionvehicular/backend/config/SecurityConfig.java b/backend/src/main/java/com/revisionvehicular/backend/config/SecurityConfig.java
+index 2fb34c5..a1b9f62 100644
+--- a/backend/src/main/java/com/revisionvehicular/backend/config/SecurityConfig.java
++++ b/backend/src/main/java/com/revisionvehicular/backend/config/SecurityConfig.java
+@@ -1,6 +1,8 @@
+ package com.revisionvehicular.backend.config;
+ 
+ import com.revisionvehicular.backend.security.JwtFilter;
++import com.revisionvehicular.backend.security.TurnosAccessFilter;
++import org.springframework.boot.web.servlet.FilterRegistrationBean;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+@@ -20,7 +22,7 @@ public class SecurityConfig {
+     }
+ 
+     @Bean
+-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
++    public SecurityFilterChain filterChain(HttpSecurity http, TurnosAccessFilter turnosAccessFilter) throws Exception {
+         http
+                 .cors(cors -> cors.configure(http))
+                 .csrf(csrf -> csrf.disable())
+@@ -31,8 +33,16 @@ public class SecurityConfig {
+                         .requestMatchers("/api/usuarios").permitAll()
+                         .anyRequest().permitAll()
+                 )
+-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
++                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
++                .addFilterAfter(turnosAccessFilter, JwtFilter.class);
+ 
+         return http.build();
+     }
+-}
+\ No newline at end of file
++
++    @Bean
++    public FilterRegistrationBean<TurnosAccessFilter> turnosAccessFilterRegistration(TurnosAccessFilter filter) {
++        var registration = new FilterRegistrationBean<>(filter);
++        registration.setEnabled(false);
++        return registration;
++    }
++}
+diff --git a/backend/src/main/java/com/revisionvehicular/backend/controllers/srtv/ConsultaTurnoController.java b/backend/src/main/java/com/revisionvehicular/backend/controllers/srtv/ConsultaTurnoController.java
+new file mode 100644
+--- /dev/null
++++ b/backend/src/main/java/com/revisionvehicular/backend/controllers/srtv/ConsultaTurnoController.java
+@@ -0,0 +1,38 @@
++package com.revisionvehicular.backend.controllers.srtv;
++
++import com.revisionvehicular.backend.service.srtv.ConsultaTurnoAcceso;
++import org.springframework.dao.DataAccessException;
++import org.springframework.http.ResponseEntity;
++import org.springframework.security.core.Authentication;
++import org.springframework.web.bind.annotation.*;
++import java.util.Map;
++
++@RestController
++@RequestMapping("/api/consulta/turnos")
++public class ConsultaTurnoController {
++    private final ConsultaTurnoAcceso acceso;
++
++    public ConsultaTurnoController(ConsultaTurnoAcceso acceso) {
++        this.acceso = acceso;
++    }
++
++    @GetMapping("/{id}")
++    public ResponseEntity<?> consultar(@PathVariable Long id, Authentication authentication) {
++        if (authentication == null || !authentication.isAuthenticated()
++                || "anonymousUser".equals(authentication.getName())) {
++            return ResponseEntity.status(401).header("WWW-Authenticate", "Bearer")
++                    .body(Map.of("error", "Sesion requerida"));
++        }
++        try {
++            var turno = acceso.consultarPropio(authentication.getName(), id);
++            if (turno.isEmpty()) {
++                return ResponseEntity.status(404).header("Cache-Control", "no-store")
++                        .body(Map.of("error", "Turno no disponible"));
++            }
++            return ResponseEntity.ok().header("Cache-Control", "no-store")
++                    .body(turno.get());
++        } catch (DataAccessException ex) {
++            return ResponseEntity.status(503).body(Map.of("error", "Consulta temporalmente no disponible"));
++        }
++    }
++}
+diff --git a/backend/src/main/java/com/revisionvehicular/backend/service/srtv/ConsultaTurnoAcceso.java b/backend/src/main/java/com/revisionvehicular/backend/service/srtv/ConsultaTurnoAcceso.java
+new file mode 100644
+--- /dev/null
++++ b/backend/src/main/java/com/revisionvehicular/backend/service/srtv/ConsultaTurnoAcceso.java
+@@ -0,0 +1,43 @@
++package com.revisionvehicular.backend.service.srtv;
++
++import org.springframework.jdbc.core.JdbcTemplate;
++import org.springframework.stereotype.Repository;
++import java.time.LocalDate;
++import java.util.Optional;
++
++@Repository
++public class ConsultaTurnoAcceso {
++    private final JdbcTemplate jdbc;
++
++    public ConsultaTurnoAcceso(JdbcTemplate jdbc) {
++        this.jdbc = jdbc;
++    }
++
++    public boolean tienePermiso(String usuario, boolean escritura) {
++        String sql = """
++            SELECT count(*) FROM srtv_usuario u
++            JOIN srtv_usuario_roles ur ON ur.usuario_id = u.usuario_id
++            JOIN srtv_rol r ON r.rol_id = ur.rol_id AND r.estado = 'A'
++            JOIN srtv_rol_opcion_menu rom ON rom.rol_id = r.rol_id
++            JOIN srtv_opcion_menu om ON om.opcion_menu_id = rom.opcion_menu_id
++            WHERE u.usuario = ? AND lower(u.estado) = 'activo'
++              AND (om.clave = 'menu_turnos' OR (? = false AND om.clave IN
++                  ('menu_historial_turnos', 'menu_inspeccion_turnos_pagados')))
++            """;
++        return jdbc.queryForObject(sql, Integer.class, usuario, escritura) > 0;
++    }
++
++    public record EstadoTurno(Long turnoId, String estado, LocalDate fechaInicio, LocalDate fechaFin) {}
++
++    public Optional<EstadoTurno> consultarPropio(String usuario, Long turnoId) {
++        String sql = """
++            SELECT t.turno_id, t.estado, t.fecha_inicio, t.fecha_fin FROM srtv_usuario u
++            JOIN srtv_usuario_propietario up ON up.usuario_id = u.usuario_id AND up.activo = true
++            JOIN rtv_turnos t ON t.propietario_id = up.propietario_id
++            WHERE u.usuario = ? AND lower(u.estado) = 'activo' AND t.turno_id = ?
++            """;
++        return jdbc.query(sql, (rs, fila) -> new EstadoTurno(rs.getLong("turno_id"), rs.getString("estado"),
++                rs.getObject("fecha_inicio", LocalDate.class), rs.getObject("fecha_fin", LocalDate.class)),
++                usuario, turnoId).stream().findFirst();
++    }
++}
+diff --git a/backend/src/main/java/com/revisionvehicular/backend/security/TurnosAccessFilter.java b/backend/src/main/java/com/revisionvehicular/backend/security/TurnosAccessFilter.java
+new file mode 100644
+--- /dev/null
++++ b/backend/src/main/java/com/revisionvehicular/backend/security/TurnosAccessFilter.java
+@@ -0,0 +1,64 @@
++package com.revisionvehicular.backend.security;
++
++import com.revisionvehicular.backend.service.srtv.ConsultaTurnoAcceso;
++import jakarta.servlet.FilterChain;
++import jakarta.servlet.ServletException;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import org.springframework.dao.DataAccessException;
++import org.springframework.security.core.context.SecurityContextHolder;
++import org.springframework.stereotype.Component;
++import org.springframework.web.filter.OncePerRequestFilter;
++import java.io.IOException;
++
++@Component
++public class TurnosAccessFilter extends OncePerRequestFilter {
++    private final ConsultaTurnoAcceso acceso;
++
++    public TurnosAccessFilter(ConsultaTurnoAcceso acceso) {
++        this.acceso = acceso;
++    }
++
++    @Override
++    protected boolean shouldNotFilter(HttpServletRequest request) {
++        String ruta = request.getServletPath();
++        return "OPTIONS".equals(request.getMethod())
++                || !(ruta.equals("/api/turnos") || ruta.startsWith("/api/turnos/")
++                || ruta.equals("/api/consulta/turnos") || ruta.startsWith("/api/consulta/turnos/"));
++    }
++
++    @Override
++    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
++                                    FilterChain chain) throws ServletException, IOException {
++        var authentication = SecurityContextHolder.getContext().getAuthentication();
++        response.setHeader("Cache-Control", "no-store");
++        if (authentication == null || !authentication.isAuthenticated()
++                || "anonymousUser".equals(authentication.getName())) {
++            response.setHeader("WWW-Authenticate", "Bearer");
++            rechazar(response, 401, "Sesion requerida");
++            return;
++        }
++        if (request.getServletPath().startsWith("/api/consulta/turnos")) {
++            chain.doFilter(request, response);
++            return;
++        }
++        try {
++            boolean escritura = !("GET".equals(request.getMethod()) || "HEAD".equals(request.getMethod()));
++            if (!acceso.tienePermiso(authentication.getName(), escritura)) {
++                rechazar(response, 403, "Acceso reservado al personal autorizado");
++                return;
++            }
++        } catch (DataAccessException ex) {
++            rechazar(response, 503, "Consulta temporalmente no disponible");
++            return;
++        }
++        chain.doFilter(request, response);
++    }
++
++    private void rechazar(HttpServletResponse response, int codigo, String mensaje) throws IOException {
++        response.setStatus(codigo);
++        response.setContentType("application/json");
++        response.setCharacterEncoding("UTF-8");
++        response.getWriter().write("{\"error\":\"" + mensaje + "\"}");
++    }
++}
+diff --git a/backend/src/test/java/com/revisionvehicular/backend/security/ConsultaTurnoAccessTest.java b/backend/src/test/java/com/revisionvehicular/backend/security/ConsultaTurnoAccessTest.java
+new file mode 100644
+--- /dev/null
++++ b/backend/src/test/java/com/revisionvehicular/backend/security/ConsultaTurnoAccessTest.java
+@@ -0,0 +1,123 @@
++package com.revisionvehicular.backend.security;
++
++import com.revisionvehicular.backend.controllers.srtv.ConsultaTurnoController;
++import com.revisionvehicular.backend.service.srtv.ConsultaTurnoAcceso;
++import jakarta.servlet.FilterChain;
++import org.junit.jupiter.api.AfterEach;
++import org.junit.jupiter.api.Test;
++import org.springframework.dao.DataAccessResourceFailureException;
++import org.springframework.mock.web.MockHttpServletRequest;
++import org.springframework.mock.web.MockHttpServletResponse;
++import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
++import org.springframework.security.core.context.SecurityContextHolder;
++import java.time.LocalDate;
++import java.util.List;
++import java.util.Optional;
++import static org.junit.jupiter.api.Assertions.*;
++import static org.mockito.Mockito.*;
++
++class ConsultaTurnoAccessTest {
++    private final ConsultaTurnoAcceso acceso = mock(ConsultaTurnoAcceso.class);
++    private final ConsultaTurnoController controller = new ConsultaTurnoController(acceso);
++
++    private UsernamePasswordAuthenticationToken sesion() {
++        return new UsernamePasswordAuthenticationToken("solicitante", null, List.of());
++    }
++
++    @AfterEach
++    void limpiarContexto() { SecurityContextHolder.clearContext(); }
++
++    @Test
++    void consultaSinSesionNoAccedeALaBase() {
++        assertEquals(401, controller.consultar(22L, null).getStatusCode().value());
++        verifyNoInteractions(acceso);
++    }
++
++    @Test
++    void devuelveSoloResumenDelTurnoPropio() {
++        var turno = new ConsultaTurnoAcceso.EstadoTurno(22L, "PAGADO", LocalDate.of(2026, 3, 8), null);
++        when(acceso.consultarPropio("solicitante", 22L)).thenReturn(Optional.of(turno));
++        var respuesta = controller.consultar(22L, sesion());
++        assertEquals(200, respuesta.getStatusCode().value());
++        assertEquals(turno, respuesta.getBody());
++        assertEquals("no-store", respuesta.getHeaders().getFirst("Cache-Control"));
++    }
++
++    @Test
++    void turnoAjenoEInexistenteNoSeDistinguen() {
++        when(acceso.consultarPropio("solicitante", 22L)).thenReturn(Optional.empty());
++        when(acceso.consultarPropio("solicitante", 999L)).thenReturn(Optional.empty());
++        var ajeno = controller.consultar(22L, sesion());
++        var inexistente = controller.consultar(999L, sesion());
++        assertEquals(404, ajeno.getStatusCode().value());
++        assertEquals(ajeno.getStatusCode(), inexistente.getStatusCode());
++        assertEquals(ajeno.getBody(), inexistente.getBody());
++    }
++
++    @Test
++    void falloDeBaseNoExponeDatos() {
++        when(acceso.consultarPropio("solicitante", 22L))
++                .thenThrow(new DataAccessResourceFailureException("detalle interno"));
++        var respuesta = controller.consultar(22L, sesion());
++        assertEquals(503, respuesta.getStatusCode().value());
++        assertFalse(respuesta.getBody().toString().contains("detalle interno"));
++    }
++
++    private MockHttpServletResponse filtrar(String metodo, String ruta, boolean autenticado,
++                                            FilterChain chain) throws Exception {
++        if (autenticado) SecurityContextHolder.getContext().setAuthentication(sesion());
++        var request = new MockHttpServletRequest(metodo, ruta);
++        request.setServletPath(ruta);
++        var response = new MockHttpServletResponse();
++        new TurnosAccessFilter(acceso).doFilter(request, response, chain);
++        return response;
++    }
++
++    @Test
++    void apiInternaSinSesionQuedaCerrada() throws Exception {
++        var chain = mock(FilterChain.class);
++        assertEquals(401, filtrar("GET", "/api/turnos/22", false, chain).getStatus());
++        verifyNoInteractions(chain, acceso);
++    }
++
++    @Test
++    void solicitanteNoPuedeUsarListadoInternoComoAtajo() throws Exception {
++        var chain = mock(FilterChain.class);
++        when(acceso.tienePermiso("solicitante", false)).thenReturn(false);
++        assertEquals(403, filtrar("GET", "/api/turnos", true, chain).getStatus());
++        verifyNoInteractions(chain);
++    }
++
++    @Test
++    void personalConPermisoPuedeConsultar() throws Exception {
++        var chain = mock(FilterChain.class);
++        when(acceso.tienePermiso("solicitante", false)).thenReturn(true);
++        assertEquals(200, filtrar("GET", "/api/turnos/22", true, chain).getStatus());
++        verify(chain).doFilter(any(), any());
++    }
++
++    @Test
++    void permisoDeLecturaNoAutorizaEscritura() throws Exception {
++        var chain = mock(FilterChain.class);
++        when(acceso.tienePermiso("solicitante", true)).thenReturn(false);
++        assertEquals(403, filtrar("PATCH", "/api/turnos/22/pago", true, chain).getStatus());
++        verifyNoInteractions(chain);
++    }
++
++    @Test
++    void consultaPropiaAutenticadaLlegaAlControlador() throws Exception {
++        var chain = mock(FilterChain.class);
++        assertEquals(200, filtrar("GET", "/api/consulta/turnos/22", true, chain).getStatus());
++        verify(chain).doFilter(any(), any());
++        verifyNoInteractions(acceso);
++    }
++
++    @Test
++    void falloAlVerificarPersonalSeCierraElAcceso() throws Exception {
++        var chain = mock(FilterChain.class);
++        when(acceso.tienePermiso("solicitante", false))
++                .thenThrow(new DataAccessResourceFailureException("detalle interno"));
++        assertEquals(503, filtrar("GET", "/api/turnos/22", true, chain).getStatus());
++        verifyNoInteractions(chain);
++    }
++}
+diff --git a/backend/scripts/consulta_turnos_vinculo_usuario_propietario.sql b/backend/scripts/consulta_turnos_vinculo_usuario_propietario.sql
+new file mode 100644
+--- /dev/null
++++ b/backend/scripts/consulta_turnos_vinculo_usuario_propietario.sql
+@@ -0,0 +1,9 @@
++CREATE TABLE IF NOT EXISTS srtv_usuario_propietario (
++    usuario_id BIGINT PRIMARY KEY REFERENCES srtv_usuario(usuario_id),
++    propietario_id BIGINT NOT NULL REFERENCES pv_propietario(propietario_id),
++    activo BOOLEAN NOT NULL DEFAULT TRUE,
++    fecha_vinculacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
++);
++
++CREATE INDEX IF NOT EXISTS idx_usuario_propietario_propietario
++    ON srtv_usuario_propietario(propietario_id);

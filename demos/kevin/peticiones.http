@@ -1,0 +1,15 @@
+@base = http://127.0.0.1:8082
+
+### Turno propio
+GET {{base}}/api/consulta/turnos/82
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Turno ajeno
+GET {{base}}/api/consulta/turnos/22
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Consulta sin sesión
+GET {{base}}/api/consulta/turnos/82
+Accept: application/json

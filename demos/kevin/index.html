@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RTV · Cliente externo REST</title>
+<style>
+body{font:17px system-ui,sans-serif;background:#f3f5f7;color:#152536;margin:0}main{max-width:850px;margin:42px auto;padding:32px;background:white;border:1px solid #d5dee7;border-radius:16px}h1{margin:8px 0 20px}label{display:block;margin:18px 0 6px}input,button{font:inherit;padding:10px;border:1px solid #a5b3c2;border-radius:6px}button{background:#163f64;color:white;margin-top:24px;cursor:pointer}button:disabled{opacity:.5}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#101f30;color:#e5f0fa;padding:20px;border-radius:8px;min-height:110px}small{color:#58697c}.tag{font-size:13px;letter-spacing:.08em;color:#43627e}#estado{font-weight:650;min-height:26px}#dato{padding:12px 0;line-height:1.7}input[type=password]{width:90%}
+</style>
+<main>
+<div class="tag">EXP-1 · CONSULTA AL BACKEND RTV</div>
+<h1>Consulta de turnos</h1>
+<p>Cliente externo → API REST del RTV → PostgreSQL.</p>
+<form id="login">
+<label for="usuario">Usuario del RTV</label><input id="usuario" autocomplete="username" required>
+<label for="contrasena">Contraseña</label><input id="contrasena" type="password" autocomplete="current-password" required>
+<br><button id="entrar">Iniciar sesión</button>
+</form>
+<p id="sesion" role="status">Sin sesión</p>
+<form id="consulta">
+<label for="turno">Identificador del turno</label>
+<input id="turno" type="number" min="1" max="9007199254740991" required>
+
+<br><button id="boton">Consultar turno</button>
+</form>
+<hr style="border:0;border-top:1px solid #d5dee7;margin-top:30px">
+<p id="estado" role="status" aria-live="polite">Listo para consultar</p>
+<div id="dato"></div>
+<p>Petición y respuesta HTTP</p>
+<pre id="respuesta">GET http://127.0.0.1:8082/api/consulta/turnos/{id}</pre>
+<small>La consulta se realiza sobre el backend del proyecto RTV. Este cliente no modifica registros.</small>
+</main>
+<script>
+const estado=document.getElementById('estado'),resultado=document.getElementById('respuesta'),dato=document.getElementById('dato');
+let tokenSesion='';
+document.getElementById('login').addEventListener('submit',async(event)=>{
+ event.preventDefault(); tokenSesion=''; dato.textContent=''; resultado.textContent='';
+ const sesion=document.getElementById('sesion'), boton=document.getElementById('entrar');
+ boton.disabled=true;
+ try{
+  const response=await fetch('http://127.0.0.1:8082/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({usuario:document.getElementById('usuario').value,contrasena:document.getElementById('contrasena').value}),signal:AbortSignal.timeout(10000)});
+  if(!response.ok){sesion.textContent='No se pudo iniciar sesión · HTTP '+response.status;return;}
+  const json=await response.json(); tokenSesion=json.token;sesion.textContent='Sesión iniciada: '+json.usuario;
+ }catch{sesion.textContent='No se pudo conectar al RTV';}
+ finally{document.getElementById('contrasena').value='';boton.disabled=false;}
+});
+document.getElementById('consulta').addEventListener('submit',async(event)=>{
+ event.preventDefault();
+ const id=document.getElementById('turno').value;
+ const token=tokenSesion;
+ const url='http://127.0.0.1:8082/api/consulta/turnos/'+encodeURIComponent(id);
+ const boton=document.getElementById('boton');
+ boton.disabled=true;dato.textContent='';estado.textContent='Consultando el RTV…';
+ try{
+  const headers={Accept:'application/json'};
+  if(token)headers.Authorization='Bearer '+token;
+  const response=await fetch(url,{headers,signal:AbortSignal.timeout(8000),cache:'no-store'});
+  const body=await response.text();
+  let json=null;try{json=JSON.parse(body);}catch{}
+  resultado.textContent='GET '+url+'\nHTTP '+response.status+' '+response.statusText+'\nContent-Type: '+response.headers.get('Content-Type')+'\n\n'+(json?JSON.stringify(json,null,2):body);
+  estado.textContent=response.ok?'Consulta completada':'El RTV respondió HTTP '+response.status;
+  if(response.ok&&json){dato.textContent='Turno '+json.turnoId+' · '+json.estado+' · Fecha de inicio: '+(json.fechaInicio??'Sin fecha');}
+ }catch{
+  estado.textContent='Consulta temporalmente no disponible';
+  resultado.textContent='GET '+url+'\nNo se pudo obtener una respuesta del RTV. Reintenta cuando el backend esté disponible.';
+ }finally{boton.disabled=false;}
+});
+</script>
+</html>
