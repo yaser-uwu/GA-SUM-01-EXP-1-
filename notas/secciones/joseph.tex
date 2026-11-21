@@ -1,26 +1,49 @@
 \subsection{Verificación externa propuesta mediante SOAP}
 
-El PFC plantea un sistema para organizar historiales médicos y citas. Hasta ahora no se ha definido una integración real con un proveedor externo; por eso, este flujo es una propuesta futura.
+El Sistema de Selección Docente (SSDC) gestiona información y documentos de
+los postulantes. Como posibilidad futura, podría consultar a un proveedor
+externo para verificar el registro de un título académico presentado por un
+postulante. No tengo confirmada una integración real del SSDC con ese tipo de
+proveedor; por eso, el flujo se plantea como una propuesta para la exposición.
 
-Como escenario, el sistema consultaría a un proveedor si una cobertura médica está vigente. El PFC actuaría como cliente y enviaría una solicitud SOAP en XML con un identificador de prueba y una fecha de consulta. No se usarían datos personales reales.
+En el escenario propuesto, el SSDC actuaría como cliente y enviaría una
+solicitud SOAP en XML con los datos mínimos que el proveedor requiriera para
+identificar el título. El proveedor procesaría la consulta y devolvería el
+resultado. La respuesta serviría de apoyo para la revisión del documento; no
+se asumiría que el SSDC aprueba o rechaza automáticamente al postulante.
 
-SOAP sería una opción si el proveedor ofreciera la operación mediante un contrato WSDL. Ese contrato tendría que definir las operaciones, los mensajes y los tipos de datos que se intercambiarían. La respuesta indicaría si la cobertura está vigente para que el sistema muestre el resultado al usuario. Esta comunicación todavía no está implementada ni comprobada con un proveedor real.
+SOAP sería una opción si el proveedor ofreciera una operación descrita
+mediante WSDL. Ese contrato definiría las operaciones disponibles y los
+formatos de los mensajes. En este caso hipotético, el WSDL describiría la
+consulta del registro académico, los datos requeridos y la estructura de la
+respuesta.
 
-Para detectar una demora, el cliente definiría un tiempo máximo de espera para la operación SOAP. Si se cumple ese tiempo sin recibir respuesta, registraría que la consulta venció y avisaría que el proveedor no respondió. Si la conexión falla, informaría que no fue posible completar la consulta. En ninguno de esos casos marcaría la cobertura como vencida, porque no recibió una respuesta válida. Este comportamiento es una propuesta; todavía no está implementado ni probado.
+\paragraph{Flujo propuesto.}
+\begin{enumerate}
+    \item El postulante registra o entrega la información de su título
+          académico en el SSDC.
+    \item El SSDC prepara una solicitud XML con los datos requeridos para
+          identificar el registro.
+    \item El SSDC envía la solicitud SOAP al proveedor externo hipotético.
+    \item El proveedor devuelve una respuesta XML con el resultado de la
+          consulta.
+    \item El SSDC presenta el resultado para apoyar la revisión del documento.
+\end{enumerate}
 
-\paragraph{Intercambio XML propuesto.}
-La solicitud y la respuesta siguientes son ejemplos. El identificador, la fecha, el nombre de la operación, los campos y el espacio de nombres son ilustrativos; el WSDL de un proveedor real tendría que definirlos.
+\paragraph{Intercambio XML ilustrativo.}
+Los siguientes mensajes son ejemplos académicos. El nombre de la operación,
+los campos, los valores y el espacio de nombres son ficticios; un servicio
+real tendría que especificarlos en su WSDL.
 
 \textbf{Solicitud propuesta:}
 \begin{verbatim}
 <env:Envelope
     xmlns:env="http://www.w3.org/2003/05/soap-envelope"
-    xmlns:cov="urn:propuesta:cobertura">
+    xmlns:titulo="urn:propuesta:verificacion-titulo">
   <env:Body>
-    <cov:ConsultarCobertura>
-      <cov:idCobertura>TEST-001</cov:idCobertura>
-      <cov:fechaConsulta>2026-11-20</cov:fechaConsulta>
-    </cov:ConsultarCobertura>
+    <titulo:ConsultarRegistro>
+      <titulo:codigoRegistro>TEST-001</titulo:codigoRegistro>
+    </titulo:ConsultarRegistro>
   </env:Body>
 </env:Envelope>
 \end{verbatim}
@@ -29,11 +52,20 @@ La solicitud y la respuesta siguientes son ejemplos. El identificador, la fecha,
 \begin{verbatim}
 <env:Envelope
     xmlns:env="http://www.w3.org/2003/05/soap-envelope"
-    xmlns:cov="urn:propuesta:cobertura">
+    xmlns:titulo="urn:propuesta:verificacion-titulo">
   <env:Body>
-    <cov:ConsultarCoberturaResponse>
-      <cov:vigente>true</cov:vigente>
-    </cov:ConsultarCoberturaResponse>
+    <titulo:ConsultarRegistroResponse>
+      <titulo:resultado>VALIDO</titulo:resultado>
+    </titulo:ConsultarRegistroResponse>
   </env:Body>
 </env:Envelope>
 \end{verbatim}
+
+\paragraph{Demora o caída del proveedor.}
+El cliente podría establecer un tiempo máximo de espera para la consulta.
+Si no recibe respuesta dentro de ese tiempo, registraría que la solicitud
+venció y mostraría que el proveedor no respondió. Si la conexión fallara,
+informaría que no fue posible completar la consulta. En ninguno de esos
+casos el SSDC debería interpretar la falta de respuesta como prueba de que
+el título es inválido. Este manejo de errores también forma parte de la
+propuesta y todavía no está implementado ni probado.
