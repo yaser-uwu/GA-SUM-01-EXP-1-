@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v="urn:practica:reserva-laboratorio"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>El campo horaFin es obligatorio.</faultstring><detail><v:ErrorValidacion><v:mensaje>El campo horaFin es obligatorio.</v:mensaje></v:ErrorValidacion></detail></soap:Fault></soap:Body></soap:Envelope>

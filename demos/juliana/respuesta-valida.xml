@@ -1,0 +1,1 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v="urn:practica:reserva-laboratorio"><soap:Body><v:Acuse><v:idSolicitud>RES-123</v:idSolicitud><v:resultado>Datos validos</v:resultado></v:Acuse></soap:Body></soap:Envelope>
