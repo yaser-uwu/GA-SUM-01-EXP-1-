@@ -9,9 +9,14 @@ Se propone incorporar un servicio REST de consulta con una base de lectura indep
 Para publicar los cambios, el backend guardaría el turno y su evento en una misma transacción mediante una bandeja de salida. Un publicador enviaría los eventos registrados a la cola. El consumidor comprobaría el identificador y la versión del evento antes de actualizar la base de lectura, evitando procesar duplicados o reemplazar un estado reciente por otro anterior.
 
 \subsection{Consulta REST}
-La petición de ejemplo es \texttt{GET /api/turnos/123}. El servicio verificaría la identidad del solicitante y su permiso para consultar el turno. Después leería la base de consulta y devolvería \texttt{200 OK} con un JSON que incluiría el identificador, el estado y la fecha de actualización. El identificador 123 corresponde a un dato de prueba.
+La ruta propuesta es \texttt{GET /api/consulta/turnos/\{id\}}. El cliente envía el identificador del turno; no selecciona al propietario. El servicio verificaría la identidad del solicitante y su permiso para consultar el turno. Después leería la base de consulta y devolvería \texttt{200 OK} con un JSON que incluiría el identificador, el estado y la fecha de actualización. El número 123 del diagrama es ilustrativo. La demostración utiliza el turno 82.
 
 El servicio devolvería un error controlado cuando el turno no exista o el usuario no tenga acceso, sin exponer información de terceros. La aplicación mostraría el estado recibido junto con su fecha de actualización.
+
+\subsection{Qué oculta la distribución y qué debe informar}
+En la propuesta, la aplicación del solicitante utiliza una dirección de consulta sin acceder directamente a las bases. Esto permite cambiar la ubicación interna de los datos sin cambiar la operación que usa el cliente. La respuesta JSON también evita que el cliente dependa de las tablas de PostgreSQL.
+
+La distribución no se oculta por completo. Si la base de lectura todavía no recibe un cambio, la aplicación debe mostrar la fecha de actualización. Si la API no responde, debe informar el fallo. Ocultar esas situaciones podría hacer que el solicitante confunda un dato anterior con el estado vigente.
 
 \subsection{Consistencia y manejo de fallos}
 La propagación asíncrona permitiría atender consultas desde la base de lectura mientras se procesan los cambios de la base principal. Durante ese intervalo, el estado consultado podría corresponder a una versión anterior. La fecha de actualización permitiría identificar la antigüedad de la información.
@@ -40,4 +45,4 @@ La consulta del turno propio devuelve \texttt{200 OK} y los campos \texttt{turno
 Se prepararon una cuenta, un propietario y un turno ficticios para la prueba. Se conservaron las peticiones, las respuestas HTTP y las capturas, y pasaron diez pruebas automatizadas. Las fechas devueltas corresponden al turno. La cola de eventos, el servicio de lectura independiente y la propagación hacia su base corresponden a la arquitectura propuesta.
 
 \subsection{Uso de inteligencia artificial}
-Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para ayudarme a preparar y revisar la redacción de las notas, el diseño de la propuesta.
+Se utilizó ChatGPT Sol 6.1 en su forma Codex como apoyo para ayudarme a preparar y revisar la redacción de las notas, y el diseño de la propuesta.
