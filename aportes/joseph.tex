@@ -1,0 +1,136 @@
+\section{SOAP para verificar títulos académicos}
+
+\begin{frame}[t]{Propuesta de verificación con SOAP}
+\tema{Joseph Calderón · Verificación externa}
+
+\begin{center}
+\begin{tikzpicture}[
+    >=Stealth,
+    node distance=1.25cm,
+    every node/.style={font=\small},
+    actor/.style={
+        draw=acento, fill=suave, rounded corners=4pt,
+        minimum height=1.15cm, align=center, inner sep=7pt
+    }
+]
+\node[actor, minimum width=2.4cm] (postulante)
+    {\textbf{Postulante}\\Entrega información del título};
+
+\node[actor, minimum width=2.6cm, right=of postulante] (ssdc)
+    {\textbf{SSDC}\\Prepara la consulta};
+
+\node[actor, minimum width=3.0cm, right=of ssdc] (servicio)
+    {\textbf{Proveedor SOAP}\\Hipotético};
+
+\draw[->, thick, acento] (postulante) -- node[above, font=\scriptsize]
+    {datos del título} (ssdc);
+
+\draw[->, thick, acento] ([yshift=3mm]ssdc.east) --
+    node[above, font=\scriptsize, align=center]
+    {solicitud SOAP\\en XML}
+    ([yshift=3mm]servicio.west);
+
+\draw[<-, thick, ambar] ([yshift=-3mm]ssdc.east) --
+    node[below, font=\scriptsize, align=center]
+    {respuesta SOAP\\en XML}
+    ([yshift=-3mm]servicio.west);
+\end{tikzpicture}
+\end{center}
+
+\medskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.48\textwidth}
+\textbf{WSDL}\\
+Describe la operación y los formatos de los mensajes.
+\end{column}
+\begin{column}{.48\textwidth}
+\textbf{Resultado}\\
+Apoya la revisión manual del documento; no aprueba automáticamente al postulante.
+\end{column}
+\end{columns}
+
+\medskip
+\kgnota{Escenario futuro e hipotético: el SSDC no tiene confirmada esta integración.}
+\note{35 segundos. Aclarar que el proveedor es hipotético. Explicar que el SSDC podría consultar un registro de título y que WSDL describiría la operación. El resultado solo apoyaría la revisión manual.}
+\end{frame}
+
+
+\begin{frame}[fragile,t]{Ejemplo del intercambio XML}
+\tema{Joseph Calderón · Mensajes ilustrativos}
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.49\textwidth}
+{\color{acento}\bfseries Solicitud}\\[2mm]
+{\scriptsize
+\begin{verbatim}
+<soap:Envelope
+ xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+ xmlns:tit="urn:propuesta:verificacion-titulo">
+  <soap:Body>
+    <tit:ConsultarRegistro>
+      <tit:codigoRegistro>
+        TEST-001
+      </tit:codigoRegistro>
+    </tit:ConsultarRegistro>
+  </soap:Body>
+</soap:Envelope>
+\end{verbatim}
+}
+\end{column}
+
+\begin{column}{.49\textwidth}
+{\color{acento}\bfseries Respuesta posible}\\[2mm]
+{\scriptsize
+\begin{verbatim}
+<soap:Envelope
+ xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+ xmlns:tit="urn:propuesta:verificacion-titulo">
+  <soap:Body>
+    <tit:ConsultarRegistroResponse>
+      <tit:resultado>VALIDO</tit:resultado>
+    </tit:ConsultarRegistroResponse>
+  </soap:Body>
+</soap:Envelope>
+\end{verbatim}
+}
+\end{column}
+\end{columns}
+
+\medskip
+\kgnota{Nombres, campos y valores ficticios; un servicio real tendría que definirlos en su WSDL.}
+\note{85 segundos. Recorrer la solicitud: el SSDC prepara un mensaje XML con los datos que exigiría el servicio. El proveedor procesaría la consulta y devolvería otro mensaje XML con el resultado. TEST-001 y VALIDO son valores de ejemplo, no datos ni respuestas de un proveedor real.}
+\end{frame}
+
+
+\begin{frame}[t]{Demora, caída o error del servicio}
+\tema{Joseph Calderón · Detección y respuesta a fallos}
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{.32\textwidth}
+{\color{ambar}\bfseries Tiempo de espera}\\[2mm]
+Si no llega una respuesta dentro del límite configurado, registrar la demora e informar que el proveedor no respondió.
+\end{column}
+
+\begin{column}{.32\textwidth}
+{\color{ambar}\bfseries Fallo de conexión}\\[2mm]
+Si no se logra conectar, informar que no fue posible completar la consulta.
+\end{column}
+
+\begin{column}{.32\textwidth}
+{\color{ambar}\bfseries SOAP Fault}\\[2mm]
+Si llega un Fault, revisar el error devuelto y comunicar que la consulta no pudo procesarse.
+\end{column}
+\end{columns}
+
+\medskip
+\colorbox{suave}{\parbox{.96\linewidth}{
+\smallskip
+\textbf{\color{acento}Regla para el SSDC:}
+la falta de respuesta no demuestra que el título sea inválido.
+\smallskip
+}}
+
+\medskip
+\kgnota{Manejo propuesto; todavía no está implementado ni probado en el SSDC.}
+\note{60 segundos. Distinguir entre demora, fallo de conexión y SOAP Fault. En los dos primeros casos no se recibe una respuesta válida; en el tercero, el servicio sí responde con información del error. El SSDC informaría el problema y no marcaría el título como inválido por falta de respuesta.}
+\end{frame}
