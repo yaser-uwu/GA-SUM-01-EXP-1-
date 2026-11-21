@@ -3,12 +3,12 @@
 \newcommand{\julianatarjeta}[2]{{\color{acento}\bfseries #1}\par\smallskip{\small #2}\par}
 \newcommand{\juliananota}[1]{{\color{gris}\footnotesize #1}\par}
 % 1: flujo SOAP
-\begin{frame}[t]{Solicitud a validación con SOAP}
+\begin{frame}[t]{Validación SOAP de reservas en CLAB}
 \tema{Juliana Emanuel · SOAP para validar}
 \smallskip
 \begin{center}
 \begin{tikzpicture}[>=Stealth,node distance=1.7cm,every node/.style={font=\small}]
-\node[draw=acento,fill=suave,rounded corners=4pt,minimum width=2.6cm,minimum height=1.35cm,align=center] (a) {\textbf{PFC}\\\scriptsize Prepara solicitud};
+\node[draw=acento,fill=suave,rounded corners=4pt,minimum width=2.6cm,minimum height=1.35cm,align=center] (a) {\textbf{CLAB}\\\scriptsize Prepara la reserva};
 \node[draw=acento,fill=suave,rounded corners=4pt,minimum width=2.8cm,minimum height=1.35cm,align=center,right=of a] (b) {\textbf{Cliente SOAP}\\\scriptsize Envía XML};
 \node[draw=acento,fill=suave,rounded corners=4pt,minimum width=3.1cm,minimum height=1.35cm,align=center,right=of b] (c) {\textbf{Servicio validador}\\\scriptsize Contrato WSDL};
 \draw[->,thick,acento] (a)--(b);
@@ -19,7 +19,7 @@
 \smallskip
 \begin{columns}[T,onlytextwidth]
 \begin{column}{.48\textwidth}
-\julianatarjeta{Entrada}{ID de solicitud y campos obligatorios.}
+\julianatarjeta{Entrada}{ID, código de laboratorio, fecha y horas de inicio y fin.}
 \end{column}
 \begin{column}{.48\textwidth}
 \julianatarjeta{Salida}{Aceptación o rechazo estructurado.}
@@ -28,35 +28,29 @@
 \medskip\par\juliananota{Flujo propuesto; no representa una integración existente verificada.}
 \end{frame}
 
-% 2: dos casos
-\begin{frame}[t]{Dos resultados de la validación}
-\tema{Juliana Emanuel · SOAP para validar}
-\smallskip
+% 2: resultados de la demo
+\begin{frame}[t]{Prueba local de validación en CLAB}
+\tema{Juliana Emanuel · SOAP para validar reservas}
+\small
+\textbf{Solicitud RES-123:} laboratorio 1, 25 de noviembre de 2026, inicio a las 10:00.
+\medskip
 \begin{columns}[T,onlytextwidth]
 \begin{column}{.48\textwidth}
-{\color{acento}\Large\bfseries Caso válido}\par\smallskip
-\colorbox{suave}{\parbox{.90\linewidth}{\ttfamily\small\smallskip
-\textless solicitud\textgreater\par
-\quad\textless id\textgreater123\textless/id\textgreater\par
-\quad\textless estado\textgreater completa\textless/estado\textgreater\par
-\textless/solicitud\textgreater\smallskip}}
-\smallskip
-{\color{acento}\bfseries Respuesta esperada}\par\smallskip
-{\small Acuse de aceptación con identificador.}
+\julianatarjeta{Reserva completa}{\texttt{horaFin = 11:00:00}}
+\medskip
+\textbf{HTTP 200}\\
+Acuse para \texttt{RES-123}: datos válidos.
 \end{column}
 \begin{column}{.48\textwidth}
-{\color{ambar}\Large\bfseries Caso inválido}\par\smallskip
-\colorbox{suave}{\parbox{.90\linewidth}{\ttfamily\small\smallskip
-\textless solicitud\textgreater\par
-\quad\textless id\textgreater123\textless/id\textgreater\par
-\quad\textless estado\textgreater\textless/estado\textgreater\par
-\textless/solicitud\textgreater\smallskip}}
-\smallskip
-{\color{ambar}\bfseries Respuesta esperada}\par\smallskip
-{\small SOAP Fault si el servicio exige ese campo.}
+\julianatarjeta{Reserva incompleta}{Se omite el elemento \texttt{horaFin}.}
+\medskip
+\textbf{HTTP 500 · SOAP Fault}\\
+El campo \texttt{horaFin} es obligatorio.
 \end{column}
 \end{columns}
-\medskip\par\juliananota{XML ilustrativo simplificado; la prueba real requiere WSDL y mensajes SOAP completos.}
+\medskip
+\juliananota{Demo SOAP 1.1 con datos ficticios. El acuse indica que los datos del ejemplo pasaron la validación.}
+\juliananota{Peticiones, respuestas y pasos de prueba en \texttt{demos/juliana/}.}
 \end{frame}
 
 % 3: recuperación
@@ -77,7 +71,7 @@
 \end{columns}
 \smallskip
 {\color{ambar}\bfseries Idea central:} {\small un rechazo no es lo mismo que una caída del servicio.}
-\medskip\par\juliananota{Medidas propuestas para el prototipo; falta documentar un incidente real del caso.}
+\medskip\par\juliananota{La demo comprobó el rechazo por hora de fin ausente. El manejo del tiempo de espera es una propuesta.}
 \end{frame}
 
 % 4: decisión
