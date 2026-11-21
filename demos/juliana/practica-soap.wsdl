@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:v="urn:practica:reserva-laboratorio"
+             targetNamespace="urn:practica:reserva-laboratorio"
+             name="ValidacionReservas">
+  <types>
+    <xsd:schema targetNamespace="urn:practica:reserva-laboratorio" elementFormDefault="qualified">
+      <xsd:element name="ValidarReserva">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="idSolicitud" type="xsd:string"/>
+            <xsd:element name="codLaboratorio" type="xsd:int"/>
+            <xsd:element name="fechaReserva" type="xsd:date"/>
+            <xsd:element name="horaInicio" type="xsd:time"/>
+            <xsd:element name="horaFin" type="xsd:time"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Acuse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="idSolicitud" type="xsd:string"/>
+            <xsd:element name="resultado" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ErrorValidacion">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="mensaje" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+  <message name="Solicitud"><part name="datos" element="v:ValidarReserva"/></message>
+  <message name="Respuesta"><part name="acuse" element="v:Acuse"/></message>
+  <message name="Fallo"><part name="error" element="v:ErrorValidacion"/></message>
+  <portType name="ValidadorReservas">
+    <operation name="ValidarReserva">
+      <input message="v:Solicitud"/>
+      <output message="v:Respuesta"/>
+      <fault name="ErrorValidacion" message="v:Fallo"/>
+    </operation>
+  </portType>
+  <binding name="ValidadorSoap" type="v:ValidadorReservas">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="ValidarReserva">
+      <soap:operation soapAction="urn:practica:reserva-laboratorio:ValidarReserva"/>
+      <input><soap:body use="literal"/></input>
+      <output><soap:body use="literal"/></output>
+      <fault name="ErrorValidacion"><soap:fault name="ErrorValidacion" use="literal"/></fault>
+    </operation>
+  </binding>
+  <service name="ValidacionReservas">
+    <port name="ValidadorSoap" binding="v:ValidadorSoap">
+      <soap:address location="http://127.0.0.1:8080/validar"/>
+    </port>
+  </service>
+</definitions>
