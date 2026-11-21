@@ -1,0 +1,61 @@
+<mxGraphModel dx="2531" dy="902" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#17365D;" value="Verificación de título académico mediante SOAP" vertex="1">
+      <mxGeometry height="45" width="940" x="80" y="30" as="geometry" />
+    </mxCell>
+    <mxCell id="subtitle" parent="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=15;fontStyle=1;fontColor=#B45309;" value="PROPUESTA FUTURA · Integración no implementada ni confirmada en el SSDC" vertex="1">
+      <mxGeometry height="35" width="880" x="110" y="78" as="geometry" />
+    </mxCell>
+    <mxCell id="postulante" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF2F8;strokeColor=#5B9BD5;fontSize=17;fontStyle=1;align=center;verticalAlign=middle;spacing=8;" value="Postulante&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Entrega información del título&lt;/font&gt;" vertex="1">
+      <mxGeometry height="95" width="190" x="-230" y="215" as="geometry" />
+    </mxCell>
+    <mxCell id="ssdc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E2F0D9;strokeColor=#70AD47;fontSize=19;fontStyle=1;align=center;verticalAlign=middle;spacing=8;" value="SSDC&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Prepara la consulta y presenta el resultado&lt;/font&gt;" vertex="1">
+      <mxGeometry height="115" width="220" x="320" y="205" as="geometry" />
+    </mxCell>
+    <mxCell id="provider" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4D6;strokeColor=#ED7D31;fontSize=17;fontStyle=1;align=center;verticalAlign=middle;spacing=8;" value="Proveedor externo&lt;br&gt;hipotético&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Consulta el registro académico&lt;/font&gt;" vertex="1">
+      <mxGeometry height="125" width="230" x="960" y="200" as="geometry" />
+    </mxCell>
+    <mxCell id="reviewer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=16;fontStyle=1;align=center;verticalAlign=middle;spacing=8;" value="Revisor del proceso&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Usa el resultado como apoyo para revisar el documento&lt;/font&gt;" vertex="1">
+      <mxGeometry height="95" width="220" x="320" y="510" as="geometry" />
+    </mxCell>
+    <mxCell id="e1" edge="1" parent="1" source="postulante" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=13;" target="ssdc" value="Entrega información del título">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" edge="1" parent="1" source="ssdc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=13;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" target="provider" value="Solicitud SOAP en XML&lt;br&gt;(consulta de registro)">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" edge="1" parent="1" source="provider" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=13;exitX=0;exitY=0.8;entryX=1;entryY=0.8;" target="ssdc" value="Respuesta SOAP en XML&lt;br&gt;(resultado de la consulta)">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="660" y="325" />
+          <mxPoint x="575" y="325" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e4" edge="1" parent="1" source="ssdc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=13;" target="reviewer" value="Muestra el resultado para revisión manual">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="wsdl" parent="1" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#F3F3F3;strokeColor=#7F7F7F;fontSize=14;align=center;verticalAlign=middle;spacing=8;" value="WSDL&lt;br&gt;Contrato que describiría la operación y los formatos de solicitud y respuesta" vertex="1">
+      <mxGeometry height="100" width="230" x="860" y="475" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" edge="1" parent="1" source="wsdl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;strokeWidth=2;fontSize=12;fontColor=#666666;strokeColor=#7F7F7F;" target="provider" value="Contrato del servicio hipotético">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="timeout" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FDE9E7;strokeColor=#C00000;fontSize=14;fontColor=#7F1D1D;align=center;verticalAlign=middle;spacing=8;" value="Si hay demora o falla la conexión: informar que no hubo respuesta. No asumir que el título es inválido." vertex="1">
+      <mxGeometry height="70" width="520" x="170" y="880" as="geometry" />
+    </mxCell>
+    <mxCell id="e6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=open;strokeWidth=2;fontSize=12;fontColor=#C00000;strokeColor=#C00000;" value="Manejo propuesto del error">
+      <mxGeometry relative="1" x="0.3636" as="geometry">
+        <mxPoint as="offset" />
+        <Array as="points">
+          <mxPoint x="290" y="320" />
+          <mxPoint x="290" y="880" />
+        </Array>
+        <mxPoint x="340" y="320" as="sourcePoint" />
+        <mxPoint x="340" y="880" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>
