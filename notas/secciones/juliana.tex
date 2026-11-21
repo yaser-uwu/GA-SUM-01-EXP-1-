@@ -1,0 +1,22 @@
+\section{Juliana Emanuel: validación de solicitudes mediante SOAP}
+
+\subsection{Operación propuesta}
+El PFC prepararía una solicitud y pediría a un validador externo que compruebe sus campos obligatorios. El ejemplo usa el ID ficticio 123 y el campo \texttt{estado}. El acuse serviría para confirmar que la solicitud superó esa validación. La operación y el proveedor están pendientes de definir.
+
+\subsection{Contrato y mensajes}
+El WSDL describiría la operación, los mensajes y los fallos que el cliente debe interpretar~\cite{w3c-wsdl20-juliana}. Los fragmentos de la diapositiva muestran los datos de la solicitud. En el intercambio propuesto, estos datos viajarían dentro del \texttt{Body} de un \texttt{Envelope} SOAP. Si el contrato indica un fallo para un campo inválido, la respuesta podría incluir un \texttt{Fault} con su código, motivo y detalle cuando corresponda~\cite[sec.~5.4]{w3c-soap12-juliana}.
+
+\subsection{Rechazo y tiempo de espera}
+Si llega un fallo que señala un dato corregible, la interfaz puede indicar el campo y permitir corregirlo. Si se agota el tiempo de espera, el cliente desconoce el resultado de la validación. Si la operación registra solicitudes, solo conviene automatizar el reintento con el mismo identificador cuando el contrato garantice que el servidor detecta duplicados.
+
+\subsection{Casos para una prueba futura}
+\begin{enumerate}
+  \item Enviar una solicitud ficticia con todos los campos requeridos y comprobar el acuse y su identificador.
+  \item Enviar una solicitud con \texttt{estado} vacío y comprobar la respuesta prevista para ese caso en el contrato.
+  \item Retrasar la respuesta más allá del límite del cliente y comprobar que el resultado quede pendiente de confirmación.
+  \item Si el servidor admite deduplicación, reenviar la misma solicitud con el mismo ID y comprobar cuántas solicitudes se registraron.
+\end{enumerate}
+Para cada caso se conservarían la petición, la respuesta o el registro del cliente, y el resultado observado. Este plan todavía está pendiente de ejecución.
+
+\subsection{Apoyo de inteligencia artificial}
+OpenAI Codex (GPT-6) se usó como apoyo para adaptar las diapositivas originales al estilo del grupo, organizar el borrador de estas notas y contrastar las referencias con los documentos originales del W3C.
