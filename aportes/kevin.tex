@@ -46,7 +46,7 @@ lab/.style={font=\scriptsize,text=gris,fill=fondo,inner sep=2pt,align=center}]
 \draw[arr] ([yshift=-7pt]read.west)--node[lab,below]{Datos}([yshift=-7pt]api.east);
 \end{tikzpicture}\par
 \vspace{3mm}
-\kgnota{El cambio y su evento se guardarían juntos. La base de lectura podría tener retraso.}
+\kgnota{La app no accede a las bases. La consulta mostraría la fecha de actualización.}
 \kgnota{La cola, el consumidor y la base separada son parte de la evolución propuesta.}
 \note{55 segundos. Seguir el flujo desde el backend hasta la base de lectura y luego la consulta REST. La bandeja de salida conserva cambio y evento en una misma transacción. La demo actual consulta el backend del RTV; estos componentes separados corresponden a la propuesta.}
 \end{frame}
