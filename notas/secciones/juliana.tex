@@ -1,22 +1,29 @@
-\section{Juliana Emanuel: validación de solicitudes mediante SOAP}
+\section{Juliana Emanuel: validación SOAP de reservas en CLAB}
 
-\subsection{Operación propuesta}
-El PFC prepararía una solicitud y pediría a un validador externo que compruebe sus campos obligatorios. El ejemplo usa el ID ficticio 123 y el campo \texttt{estado}. El acuse serviría para confirmar que la solicitud superó esa validación. La operación y el proveedor están pendientes de definir.
+\subsection{Operación y contrato}
+CLAB es el sistema distribuido para la gestión y reserva de laboratorios. El modelo heredado utiliza código de laboratorio, fecha de reserva y horas de inicio y fin. En el servicio nuevo, la consulta REST entre Reservas y Laboratorios comprueba la comunicación. Para la exposición se propone que CLAB envíe esos datos a un validador externo si el receptor exige un contrato WSDL y mensajes SOAP. El acuse solo confirma la validación de los datos del ejemplo. La disponibilidad del laboratorio y la confirmación del cupo requieren comprobaciones adicionales.
 
-\subsection{Contrato y mensajes}
-El WSDL describiría la operación, los mensajes y los fallos que el cliente debe interpretar~\cite{w3c-wsdl20-juliana}. Los fragmentos de la diapositiva muestran los datos de la solicitud. En el intercambio propuesto, estos datos viajarían dentro del \texttt{Body} de un \texttt{Envelope} SOAP. Si el contrato indica un fallo para un campo inválido, la respuesta podría incluir un \texttt{Fault} con su código, motivo y detalle cuando corresponda~\cite[sec.~5.4]{w3c-soap12-juliana}.
+El WSDL de práctica describe la operación \texttt{ValidarReserva}, los campos requeridos, el acuse y el fallo. La demo utiliza SOAP 1.1. Las recomendaciones de SOAP 1.2 y WSDL 2.0 se consultaron como referencias conceptuales~\cite{w3c-soap12-juliana,w3c-wsdl20-juliana}.
 
-\subsection{Rechazo y tiempo de espera}
-Si llega un fallo que señala un dato corregible, la interfaz puede indicar el campo y permitir corregirlo. Si se agota el tiempo de espera, el cliente desconoce el resultado de la validación. Si la operación registra solicitudes, solo conviene automatizar el reintento con el mismo identificador cuando el contrato garantice que el servidor detecta duplicados.
+\subsection{Resultados observados}
+Desde \texttt{demos/juliana/}, ejecutar \texttt{node practica-soap.mjs}. Se utilizó la solicitud ficticia \texttt{RES-123} para el laboratorio 1, el 25 de noviembre de 2026, con inicio a las 10:00.
+\begin{itemize}
+  \item Con \texttt{horaFin} a las 11:00, el servicio devolvió HTTP 200 y un acuse de datos válidos.
+  \item Al omitir \texttt{horaFin}, devolvió HTTP 500 con un SOAP Fault que indica que ese campo es obligatorio. Antes de reenviar, se debe completar la hora de fin.
+\end{itemize}
+Los XML de entrada y salida, el WSDL y los pasos están en \texttt{demos/juliana/}. Allí también está la captura de la ejecución en VS Code. El prototipo reconoce los dos mensajes de prueba. La validación general contra el esquema y la integración con el PFC quedan pendientes.
 
-\subsection{Casos para una prueba futura}
+\subsection{Incidente externo propuesto para la comparación}
+El incidente de GitHub del 21 de octubre de 2018 es un caso candidato, sujeto a confirmación del docente. El desencadenante fue una interrupción de 43 segundos durante el reemplazo de equipo de red. La conmutación automática promovió bases primarias en otra región. Tras restablecerse el enlace, ambos centros tenían escrituras que el otro no tenía, lo que impidió volver de inmediato a la topología anterior. El equipo pausó tareas en segundo plano, restauró réplicas y verificó la replicación antes de reanudar el procesamiento. Entre las mitigaciones previstas, GitHub planteó limitar la promoción automática entre regiones~\cite{warner-github-incidente-2018}.
+
+La aplicación a CLAB es conservar la solicitud como pendiente cuando se pierde la comunicación, consultar su estado por ID antes de reenviar y confirmar el cupo solo cuando se pueda comprobar la disponibilidad. Si el servicio permite reintentos automáticos, el contrato debe especificar cómo reconoce solicitudes repetidas. Estas medidas se proponen para CLAB. En la demo se ejecutaron los casos de acuse y SOAP Fault.
+
+\subsection{Orden del turno}
 \begin{enumerate}
-  \item Enviar una solicitud ficticia con todos los campos requeridos y comprobar el acuse y su identificador.
-  \item Enviar una solicitud con \texttt{estado} vacío y comprobar la respuesta prevista para ese caso en el contrato.
-  \item Retrasar la respuesta más allá del límite del cliente y comprobar que el resultado quede pendiente de confirmación.
-  \item Si el servidor admite deduplicación, reenviar la misma solicitud con el mismo ID y comprobar cuántas solicitudes se registraron.
+  \item Mostrar las dos respuestas de la demo y explicar qué campo corregir.
+  \item Explicar cuándo usar SOAP con WSDL y cuándo evaluar una interfaz REST para la misma operación.
+  \item Resumir la recuperación del incidente, si se aprueba el caso, y explicar qué haría CLAB ante una respuesta ausente.
 \end{enumerate}
-Para cada caso se conservarían la petición, la respuesta o el registro del cliente, y el resultado observado. Este plan todavía está pendiente de ejecución.
 
 \subsection{Apoyo de inteligencia artificial}
-OpenAI Codex (GPT-6) se usó como apoyo para adaptar las diapositivas originales al estilo del grupo, organizar el borrador de estas notas y contrastar las referencias con los documentos originales del W3C.
+OpenAI Codex (GPT-6) apoyó la adaptación de las diapositivas, el prototipo, el diagrama y la redacción de estas notas. Juliana ejecutó la demo en su computadora y guardó la captura. Las referencias se contrastaron con las especificaciones del W3C y el informe original de GitHub.
