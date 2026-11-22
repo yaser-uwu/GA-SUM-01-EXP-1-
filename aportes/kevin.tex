@@ -19,36 +19,10 @@ Consulta sin modificar el turno.
 \note{40 segundos. Explicar el sistema y quién lo utiliza. La operación es consultar, no registrar. El entorno de prueba utiliza una cuenta ficticia; no representa una medición de carga real.}
 \end{frame}
 
-\begin{frame}{Arquitectura de consulta propuesta}
+\begin{frame}[plain]
 \centering
-\begin{tikzpicture}[x=1cm,y=1cm,
-box/.style={draw=borde,fill=white,align=center,text=tinta,minimum width=3.55cm,minimum height=.76cm,font=\small},
-arr/.style={-{Stealth[length=1.8mm]},draw=acento,line width=.9pt},
-lab/.style={font=\scriptsize,text=gris,fill=fondo,inner sep=2pt,align=center}]
-\node[box] (staff) at (0,0) {Web del personal};
-\node[box] (back) at (4.9,0) {Backend RTV};
-\node[box] (main) at (9.8,0) {Base principal\\+ bandeja de salida};
-\node[box] (pub) at (9.8,-1.5) {Publicador de eventos};
-\node[box] (queue) at (4.9,-1.5) {Cola de mensajes};
-\node[box] (consume) at (0,-1.5) {Consumidor\\Control de ID y versión};
-\node[box] (client) at (0,-3.55) {App del solicitante};
-\node[box,fill=suave,draw=acento] (api) at (4.9,-3.55) {Servicio REST de consulta\\Identidad y autorización};
-\node[box] (read) at (9.8,-3.55) {Base de lectura\\Proyección de turnos};
-\draw[arr] (staff)--node[lab,above]{HTTP + JSON}(back);
-\draw[arr] (back)--node[lab,above]{Cambio + evento}(main);
-\draw[arr] (main)--node[lab,right]{Leer eventos}(pub);
-\draw[arr] (pub)--node[lab,above]{Publicar}(queue);
-\draw[arr] (queue)--node[lab,above]{Entregar}(consume);
-\draw[arr] (consume.south)--(0,-2.45)--node[lab,above]{Actualizar; ignorar duplicados y versiones antiguas}(9.8,-2.45)--(read.north);
-\draw[arr] ([yshift=5pt]client.east)--node[lab,above]{GET por ID}([yshift=5pt]api.west);
-\draw[arr] ([yshift=-7pt]api.west)--node[lab,below]{200 + JSON}([yshift=-7pt]client.east);
-\draw[arr] ([yshift=5pt]api.east)--node[lab,above]{Consultar}([yshift=5pt]read.west);
-\draw[arr] ([yshift=-7pt]read.west)--node[lab,below]{Datos}([yshift=-7pt]api.east);
-\end{tikzpicture}\par
-\vspace{3mm}
-\kgnota{La app no accede a las bases. La consulta mostraría la fecha de actualización.}
-\kgnota{La cola, el consumidor y la base separada son parte de la evolución propuesta.}
-\note{55 segundos. Seguir el flujo desde el backend hasta la base de lectura y luego la consulta REST. La bandeja de salida conserva cambio y evento en una misma transacción. La demo actual consulta el backend del RTV; estos componentes separados corresponden a la propuesta.}
+\includegraphics[width=\textwidth,height=.94\paperheight,keepaspectratio]{../diagramas/kevin-rest.png}
+\note{Arquitectura de consulta propuesta. Seguir las flechas del diagrama de draw.io. La cola, el consumidor y la base de lectura independiente corresponden a una evolución futura. La demo actual utiliza GET /api/consulta/turnos/82; el identificador 123 del diagrama es ilustrativo.}
 \end{frame}
 
 \begin{frame}[fragile]{Consulta probada en el RTV}
@@ -98,3 +72,4 @@ Si la API falla: informar y permitir reintentar.
 \kgnota{REST requiere definir peticiones y respuestas~\cite[sec.~3.2.1]{lercher_microservice_2024}. SOAP se consideraría si la integración exigiera WSDL.}
 \note{35 segundos. CAP y PACELC describen la arquitectura propuesta, no propiedades de REST. Continuar leyendo supone que el servicio y su base siguen accesibles. Para confirmar pagos se usa la información vigente del servicio responsable. Un resultado anterior se identifica con su fecha. No afirmar que REST es siempre más rápido que SOAP.}
 \end{frame}
+
