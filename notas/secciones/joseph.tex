@@ -12,8 +12,10 @@ identificar el título. El proveedor procesaría la consulta y devolvería el
 resultado. La respuesta serviría de apoyo para la revisión del documento; no
 se asumiría que el SSDC aprueba o rechaza automáticamente al postulante.
 
-SOAP sería una opción si el proveedor ofreciera una operación descrita
-mediante WSDL. Ese contrato definiría las operaciones disponibles y los
+Un estudio reciente analiza el intercambio de mensajes SOAP en XML
+\cite{ayfan2024soap}; una revisión de 2026 describe el uso de contratos WSDL
+en servicios SOAP \cite{kannan-soap-rest-2026}. SOAP sería una opción si
+el proveedor ofreciera una operación descrita mediante WSDL. Ese contrato definiría las operaciones disponibles y los
 formatos de los mensajes. En este caso hipotético, el WSDL describiría la
 consulta del registro académico, los datos requeridos y la estructura de la
 respuesta.
@@ -68,4 +70,7 @@ venció y mostraría que el proveedor no respondió. Si la conexión fallara,
 informaría que no fue posible completar la consulta. En ninguno de esos
 casos el SSDC debería interpretar la falta de respuesta como prueba de que
 el título es inválido. Este manejo de errores también forma parte de la
-propuesta y todavía no está implementado ni probado.
+propuesta y todavía no está implementado ni probado en el SSDC. El ejemplo ejecutable
+local se encuentra en \texttt{demos/joseph/}; utiliza SOAP 1.2 y códigos
+de prueba ficticios. Al ejecutarlo, guarda peticiones y respuestas,
+una prueba SOAP Fault y una prueba de tiempo de espera.
