@@ -49,7 +49,7 @@ pdflatex "diapositiva-García Kevin.tex"
 Copy-Item "diapositiva-García Kevin.pdf" "exposicion-soap-rest.pdf" -Force
 ```
 
-Las imágenes y los archivos `.bib` se cargan con rutas relativas. Se debe conservar la estructura de carpetas al descargar o clonar el repositorio. El contenido de las notas integradas se reúne en `notas/contenido-integrado.tex`; las secciones individuales se conservan como material de cada responsable. El principal incorpora `notas/secciones/khriz.tex` cuando ese archivo existe.
+Las imágenes y los archivos `.bib` se cargan con rutas relativas. Se debe conservar la estructura de carpetas al descargar o clonar el repositorio. El texto integrado se puede editar directamente en `notas/notas.tex`; las secciones individuales se conservan como material de cada responsable. El principal incorpora `notas/secciones/khriz.tex` cuando ese archivo existe.
 
 ## Prácticas
 
@@ -60,6 +60,10 @@ Las imágenes y los archivos `.bib` se cargan con rutas relativas. Se debe conse
 | [Juliana: validación SOAP](demos/juliana/README.md) | Desde `demos/juliana/`, ejecutar `node practica-soap.mjs`. Requiere Node.js 18 o posterior. Comprueba el acuse de una solicitud completa y el SOAP Fault por hora de fin ausente. |
 
 Las cuentas, los turnos y los mensajes utilizados son de prueba. El prototipo SOAP de Joseph no consulta un registro académico real. El acuse de Juliana comprueba los datos del ejemplo, no la disponibilidad real de un laboratorio. En el RTV, la cola de eventos y la base de lectura independiente forman parte de la evolución propuesta.
+
+## Video grupal
+
+[Ver el ensayo grupal de la exposición en YouTube](https://www.youtube.com/watch?v=CkRA7jrbEpk).
 
 ## Fuentes
 
