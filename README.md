@@ -72,4 +72,4 @@ Las capturas anotadas conservan la página del artículo. Los resultados de esas
 
 ## Uso de inteligencia artificial
 
-Se utilizó ChatGPT Sol 6.1 mediante Codex para ayudar a la integración de las notas de manera más sencilla, preparar este README de forma más clara. Las declaraciones de cada práctica se encuentran en su documentación y en la bitácora.
+Se utilizó ChatGPT Sol 6.1 mediante Codex para apoyar la integración de las notas, preparar este README, localizar y revisar las fuentes complementarias y comprobar la compilación. Las declaraciones de cada práctica se encuentran en su documentación y en la bitácora.
