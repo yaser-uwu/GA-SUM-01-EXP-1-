@@ -1,0 +1,9 @@
+Fecha/hora local: 2026-11-21T23:02:32-05:00
+Equipo: JosephACS | Usuario: Horat
+Demo local y sintética; no consulta un registro académico real.
+WSDL: HTTP 200, XML válido
+consulta_valida: HTTP 200 | VALIDO | OK
+consulta_no_valida: HTTP 200 | NO_VALIDO | OK
+consulta_sin_codigo: HTTP 500 | codigoRegistro es obligatorio. | OK
+consulta_lenta: espera de 1 s agotada | OK (TimeoutError)
+RESULTADO: 4 casos y WSDL comprobados
