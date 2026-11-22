@@ -23,3 +23,10 @@
 - **Problemas encontrados:** La ruta ilustrativa del diagrama podía confundirse con la ruta usada en la demo.
 - **Solución:** Se aclaró que la demo consulta el turno 82 mediante `/api/consulta/turnos/82` y que el identificador 123 del diagrama es ilustrativo.
 - **Uso de inteligencia artificial:** Se utilizó ChatGPT Sol 6.1 mediante Codex para revisar y ajustar las notas y darle un mejor diseño a las diapositivas.
+
+## 2026-11-21 — Juliana Romina Emanuel Pino
+
+- **Trabajo individual:** Validación SOAP en el sistema de reservas de laboratorios.
+- **Realizado:** Se ejecutaron los casos de solicitud completa y solicitud sin hora de fin. Se conservaron el acuse HTTP 200, el SOAP Fault HTTP 500, sus XML y la captura de VS Code.
+- **Problema y solución:** Las notas describían el campo de ejemplo estado. Se actualizaron con el resultado observado al omitir horaFin. Se comparó la validación de campos con la comprobación de horarios de Microsoft Places y se añadieron fuentes recientes.
+- **Uso de IA:** OpenAI Codex (GPT-6) apoyó la revisión del prototipo, la preparación de material y la comprobación de las referencias. Juliana ejecutó la demo y guardó su captura.
