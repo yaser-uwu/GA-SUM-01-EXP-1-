@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tit="urn:propuesta:verificacion-titulo">
+  <soap:Body><tit:ConsultarRegistro><tit:codigoRegistro>TEST-LENTO</tit:codigoRegistro></tit:ConsultarRegistro></soap:Body>
+</soap:Envelope>

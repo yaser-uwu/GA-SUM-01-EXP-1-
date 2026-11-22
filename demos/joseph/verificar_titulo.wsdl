@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:tns="urn:propuesta:verificacion-titulo"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+             name="VerificarTituloService" targetNamespace="urn:propuesta:verificacion-titulo">
+  <types><xsd:schema targetNamespace="urn:propuesta:verificacion-titulo" elementFormDefault="qualified">
+    <xsd:element name="ConsultarRegistro"><xsd:complexType><xsd:sequence>
+      <xsd:element name="codigoRegistro" type="xsd:string"/>
+    </xsd:sequence></xsd:complexType></xsd:element>
+    <xsd:element name="ConsultarRegistroResponse"><xsd:complexType><xsd:sequence>
+      <xsd:element name="resultado" type="xsd:string"/>
+    </xsd:sequence></xsd:complexType></xsd:element>
+  </xsd:schema></types>
+  <message name="ConsultarRegistroInput"><part name="parameters" element="tns:ConsultarRegistro"/></message>
+  <message name="ConsultarRegistroOutput"><part name="parameters" element="tns:ConsultarRegistroResponse"/></message>
+  <portType name="VerificarTituloPortType"><operation name="ConsultarRegistro">
+    <input message="tns:ConsultarRegistroInput"/>
+    <output message="tns:ConsultarRegistroOutput"/>
+  </operation></portType>
+  <binding name="VerificarTituloSoap12Binding" type="tns:VerificarTituloPortType">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="ConsultarRegistro">
+      <soap12:operation soapAction="urn:propuesta:verificacion-titulo/ConsultarRegistro"/>
+      <input><soap12:body use="literal"/></input>
+      <output><soap12:body use="literal"/></output>
+    </operation>
+  </binding>
+  <service name="VerificarTituloService"><port name="VerificarTituloSoap12Port" binding="tns:VerificarTituloSoap12Binding">
+    <soap12:address location="http://127.0.0.1:8000/soap"/>
+  </port></service>
+</definitions>
