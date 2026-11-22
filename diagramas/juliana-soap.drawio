@@ -5,13 +5,13 @@
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="title" value="Validación SOAP de solicitudes del PFC" style="text;align=left;verticalAlign=middle;fontSize=28;fontStyle=1;fontColor=#132F3A;" vertex="1" parent="1">
+        <mxCell id="title" value="Validación SOAP de reservas en CLAB" style="text;align=left;verticalAlign=middle;fontSize=28;fontStyle=1;fontColor=#132F3A;" vertex="1" parent="1">
           <mxGeometry x="60" y="45" width="840" height="50" as="geometry"/>
         </mxCell>
         <mxCell id="subtitle" value="Flujo propuesto · Juliana Emanuel" style="text;align=left;verticalAlign=middle;fontSize=15;fontColor=#52616A;" vertex="1" parent="1">
           <mxGeometry x="60" y="96" width="840" height="26" as="geometry"/>
         </mxCell>
-        <mxCell id="pfc" value="PFC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#087E81;fontColor=#132F3A;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+        <mxCell id="pfc" value="CLAB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#087E81;fontColor=#132F3A;fontSize=18;fontStyle=1;" vertex="1" parent="1">
           <mxGeometry x="60" y="185" width="150" height="90" as="geometry"/>
         </mxCell>
         <mxCell id="client" value="Cliente SOAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DFEEEB;strokeColor=#087E81;fontColor=#132F3A;fontSize=18;fontStyle=1;" vertex="1" parent="1">
