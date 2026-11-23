@@ -1,0 +1,19 @@
+@base = http://127.0.0.1:8083
+
+### Crear una solicitud individual: 201 y requestId
+POST {{base}}/api/student/requests
+Content-Type: application/json
+
+< ./peticion-valida.json
+
+### Omitir el motivo: 400 sin crear un registro
+POST {{base}}/api/student/requests
+Content-Type: application/json
+
+< ./peticion-sin-motivo.json
+
+### JSON mal formado: 400
+POST {{base}}/api/student/requests
+Content-Type: application/json
+
+{"subjectId":

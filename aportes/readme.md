@@ -5,7 +5,7 @@ El archivo principal es `diapositiva-García Kevin.tex`. Reúne las secciones de
 | Integrante | Archivo que edita | Tema |
 | --- | --- | --- |
 | Kevin | `kevin.tex` | REST para consultar turnos del RTV |
-| Khriz | `khriz.tex` | REST para registrar |
+| Khriz | `khriz.tex` | REST para registrar solicitudes de refuerzo en SGRA |
 | Joseph | `joseph.tex` | SOAP para verificar |
 | Juliana | `juliana.tex` | SOAP para validar |
 

@@ -1,0 +1,10 @@
+HTTP/1.1 400 Bad Request
+cache-control: no-store
+connection: keep-alive
+content-type: application/json; charset=utf-8
+date: Sun, 22 Nov 2026 04:04:08 GMT
+keep-alive: timeout=5
+transfer-encoding: chunked
+x-content-type-options: nosniff
+
+{"error":"Solicitud inválida.","fields":{"reason":"El motivo es obligatorio y debe tener al menos 10 caracteres."}}

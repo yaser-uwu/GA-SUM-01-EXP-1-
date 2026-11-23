@@ -1,0 +1,22 @@
+Pruebas de EXP-1 / Khriz / prototipo SGRA
+Ejecución UTC: 2026-11-22T04:04:08.735Z
+Node.js: v24.22.3
+Servicio local temporal: http://127.0.0.1:55576/api/student/requests
+Datos ficticios; registros en memoria.
+
+OK - Solicitud válida: HTTP 201, identificador 1 y registro Pendiente.
+OK - Sin motivo: HTTP 400 y ningún registro adicional.
+OK - JSON mal formado: HTTP 400 sin detener el servicio.
+OK - Disponibilidad ausente: HTTP 400, sin insertar.
+OK - Motivo demasiado corto: HTTP 400, sin insertar.
+OK - Identificador inválido: HTTP 400, sin insertar.
+OK - Tipo grupal fuera del alcance: HTTP 400, sin insertar.
+OK - Cuerpo que no es objeto: HTTP 400, sin insertar.
+OK - Tipo de contenido incorrecto: HTTP 415.
+OK - Cuerpo mayor de 16 KiB: HTTP 413, sin insertar.
+OK - GET en la ruta de creación: HTTP 405 y Allow: POST.
+OK - Nueva solicitud tras errores: HTTP 201 e identificador 2.
+
+Resultado: 12 comprobaciones aprobadas.
+La repetición de una petición válida crea otro registro: la idempotencia es una propuesta.
+El servicio temporal se cierra al terminar. Los puertos de las evidencias no son permanentes.

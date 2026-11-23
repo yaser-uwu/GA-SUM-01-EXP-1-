@@ -1,0 +1,10 @@
+POST http://127.0.0.1:55576/api/student/requests HTTP/1.1
+Host: 127.0.0.1:55576
+Content-Type: application/json
+
+{
+  "subjectId": 1,
+  "sessionTypeId": 1,
+  "reason": "Necesito reforzar los conceptos de redes distribuidas.",
+  "preferredSchedule": "Martes de 15:00 a 16:00"
+}
