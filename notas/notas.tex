@@ -1,9 +1,13 @@
 \documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage{iftex}
+\ifPDFTeX
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\fi
 \usepackage[spanish]{babel}
-\usepackage{lmodern,graphicx,csquotes}
-\usepackage[margin=1.65cm,columnsep=.65cm]{geometry}
+\usepackage{graphicx,csquotes}
+\usepackage[margin=1.4cm,columnsep=.6cm]{geometry}
 
 \usepackage[backend=biber,style=ieee,url=false,isbn=false,maxbibnames=3]{biblatex}
 \usepackage[colorlinks=true,allcolors=teal]{hyperref}
@@ -14,7 +18,7 @@
 \addbibresource{../referencias/referencias-complementarias.bib}
 \IfFileExists{../referencias/referencias-khriz.bib}{\addbibresource{../referencias/referencias-khriz.bib}}{}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{3pt}
+\setlength{\parskip}{2pt}
 \emergencystretch=2em
 
 \begin{document}
@@ -221,12 +225,21 @@ La API oculta al cliente la ubicación de los datos, pero debe informar el
 fallo o la antigüedad de una copia. CAP y PACELC describen decisiones de
 almacenamiento y coordinación; no clasifican por sí solos a REST o SOAP.
 
-\textbf{Alcance observado.} Las pruebas publicadas muestran consultas de
-turnos y dos validadores locales. Los identificadores y las cuentas de
+\textbf{Alcance observado.} Las pruebas publicadas incluyen la consulta de
+turnos y el registro local de solicitudes. Los identificadores y las cuentas de
 ensayo no representan cantidades de usuarios reales. Las propuestas de
 replicación, mensajería y escalado requieren mediciones y pruebas propias.
 
-\IfFileExists{secciones/khriz.tex}{\input{secciones/khriz.tex}}{}
+\section{Khriz Coronel: registro REST en SGRA}
+\textbf{Turno 3:00--6:00.} El estudiante solicita refuerzo para una asignatura e indica su disponibilidad preferida. El registro queda pendiente de revisión docente~\cite{sgra-rf01-khriz}.
+
+\textbf{Caso y transparencia (60 s).} El cliente envía la solicitud a la API sin conocer las tablas ni el nodo que atiende. Si la respuesta se pierde, el cliente debe indicar que el resultado todavía es incierto.
+
+\textbf{POST (45 s).} En la demo autónoma, una solicitud individual con asignatura, motivo y disponibilidad devuelve \texttt{201} con su identificador. Si falta el motivo, devuelve \texttt{400} y no inserta datos. Desde la raíz, ejecutar \texttt{node demos/khriz/probar-rest.mjs}. La llamada HTTP permite recibir el resultado en la misma interacción. Una cola exigiría seguimiento posterior~\cite{kazanavicius-comunicacion-2023-khriz}.
+
+\textbf{Reintentos (30 s).} Si se pierde la respuesta después de guardar, reenviar el POST puede duplicar la solicitud. Se propone conservar una clave por operación junto con el resultado para recuperar el identificador original.
+
+\textbf{CAP y PACELC (45 s).} Para confirmar un último cupo en una evolución con dos nodos, se pospondría esa decisión si una partición impide coordinarla~\cite{gilbert-lynch-cap-khriz}. Sin partición, esperar la coordinación añade latencia~\cite{abadi-pacelc-khriz}. La demo conserva solicitudes pendientes en memoria. La confirmación distribuida y la idempotencia son propuestas.
 \section{Responsables y aportes}
 \small
 \setlength{\tabcolsep}{2pt}
@@ -235,6 +248,7 @@ replicación, mensajería y escalado requieren mediciones y pruebas propias.
 Responsable & Material y trazabilidad\\
 \hline
 Kevin García & \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/tree/main/demos/kevin}{REST: consulta de turnos}; \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/commits/main/?author=yaser-uwu}{historial de aportes}.\\
+Khriz Coronel & \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/tree/main/demos/khriz}{REST: registro SGRA}; \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/commit/0ca3863}{aporte registrado}.\\
 Joseph Calderón & \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/tree/main/demos/joseph}{SOAP: verificación}; \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/commits/main/?author=JosephACS}{historial de aportes}.\\
 Juliana Emanuel & \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/tree/main/demos/juliana}{SOAP: validación}; \href{https://github.com/yaser-uwu/GA-SUM-01-EXP-1-/commits/main/?author=JulianaEmanuel}{historial de aportes}.\\
 \hline
@@ -248,17 +262,19 @@ Se utilizó ChatGPT Sol 6.1 mediante Codex para apoyar la integración de las
 notas, preparar el README, localizar y revisar las fuentes complementarias
 y comprobar la compilación. Las declaraciones individuales se conservan
 en las secciones de cada responsable.
+En el aporte de Khriz, OpenAI Codex apoyó el prototipo, las pruebas, la explicación y la consulta de fuentes.
+\begingroup
+\small
+\setlength{\bibitemsep}{2pt}
 \printbibliography[title={Referencias}]
-\newpage
+\endgroup
 \section*{Anexo: bosquejos a mano}
-\begin{center}
-\includegraphics[width=\columnwidth,height=5.4cm,keepaspectratio]{../evidencias/kevin-bosquejo-rest-rtv.jpeg}
-
-{\small Kevin García: consulta REST del RTV.}
-
-\medskip
-\includegraphics[width=\columnwidth,height=8.2cm,keepaspectratio]{../evidencias/juliana-bosquejo-soap.png}
-
-{\small Juliana Emanuel: validación SOAP.}
-\end{center}
+\noindent\begin{minipage}[t]{.48\columnwidth}\centering
+\includegraphics[width=\linewidth,height=3.2cm,keepaspectratio]{../evidencias/kevin-bosquejo-rest-rtv.jpeg}\par
+{\footnotesize Kevin García · RTV}
+\end{minipage}\hfill
+\begin{minipage}[t]{.48\columnwidth}\centering
+\includegraphics[width=\linewidth,height=3.2cm,keepaspectratio]{../evidencias/juliana-bosquejo-soap.png}\par
+{\footnotesize Juliana Emanuel · CLAB}
+\end{minipage}
 \end{document}

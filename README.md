@@ -44,12 +44,12 @@ pdflatex -interaction=nonstopmode -halt-on-error khriz.tex
 pdflatex -interaction=nonstopmode -halt-on-error khriz.tex
 ```
 
-Se genera `notas/khriz.pdf`. Su sección editable está en `notas/secciones/khriz.tex`. Estas notas individuales se deben integrar y ajustar con las de los compañeros para obtener las notas grupales de 2–4 páginas.
+Se genera `notas/khriz.pdf`. Su sección editable está en `notas/secciones/khriz.tex`. El resumen de su turno forma parte de [las notas grupales](notas/notas.tex). Para generar `notas/notas.pdf`, aplicar la misma secuencia desde `notas/` con `notas.tex` y `biber notas`.
 
 ## Ensayo y evidencias pendientes
 
-**Enlace del video del ensayo: pendiente de grabación y publicación por el equipo.** Debe durar como máximo 12 minutos, incluir rostro y voz de todos y abrir sin iniciar sesión. Khriz coordina el ensayo y verifica el enlace en ventana privada.
+[Video grupal en YouTube](https://www.youtube.com/watch?v=CkRA7jrbEpk). El equipo debe verificar que la grabación corresponda a la versión que presenta y que cumpla los requisitos de acceso, duración y participación.
 
-Quedan pendientes la fotografía auténtica del bosquejo grupal con nombres y fecha, los enlaces a los commits propios en la tabla de aportes, la revisión personal de los materiales y la integración final de las notas. La captura anotada de Khriz fue preparada con asistencia de Codex y no acredita una lectura personal. El equipo debe verificar el cumplimiento global de las fuentes y las formativas.
+Queda por verificar la fotografía del bosquejo grupal con nombres y fecha y completar la trazabilidad de los aportes de cada persona. La captura anotada de Khriz fue preparada con asistencia de Codex. El equipo debe verificar el cumplimiento de las fuentes y las formativas.
 
 El código `GA-SUM-01` se conserva en la portada existente; el enunciado general aportado indica `GA-SUM-02`. El equipo debe confirmar el código aplicable antes de la entrega. El README no acredita entrega en el SGA ni aprobación de la adaptación temática.
