@@ -1,100 +1,87 @@
+\begingroup
+\shorthandoff{"}
+\definecolor{kgFondo}{HTML}{FAF7F0}
+\definecolor{kgTinta}{HTML}{003842}
+\definecolor{kgMenta}{HTML}{AFF2D1}
+\definecolor{kgGris}{HTML}{52666A}
+\setbeamercolor{background canvas}{bg=kgFondo}
+\setbeamercolor{normal text}{fg=kgTinta}
+\newcommand{\kgLienzo}{\begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm,shift={(current page.south west)},every node/.style={text=kgTinta,font=\sffamily,inner sep=0pt},>=Stealth]}
+\newcommand{\kgFin}{\end{tikzpicture}}
+\newcommand{\kgPie}[1]{\node[anchor=west,font=\fontsize{7}{9}\selectfont,text=kgGris] at (.8,.42) {Kevin García · REST para consultar};\node[anchor=east,font=\fontsize{7}{9}\selectfont,text=kgGris] at (15.2,.42) {#1};}
 \section{REST para consultar: Revisión Técnica Vehicular}
-\begin{frame}{Consulta de turnos del RTV}
-\tema{Kevin García · REST para consultar}
-\begin{columns}[T,onlytextwidth]
-\begin{column}{.56\textwidth}
-{\Large El solicitante consulta\par el estado de su turno.}\par\medskip
-El RTV gestiona turnos, pagos e inspecciones. El personal trabaja desde una web conectada al backend.
-\end{column}
-\begin{column}{.37\textwidth}
-{\color{acento}\bfseries Cliente externo}\par\smallskip
-Acceso a un turno propio.\par\medskip
-{\color{acento}\bfseries GET}\par\smallskip
-Consulta sin modificar el turno.
-\end{column}
-\end{columns}
-\vspace{6mm}
-{\color{borde}\hrule}\medskip
-\kgnota{Prueba: una cuenta ficticia vinculada a un propietario y a su turno.}
-\note{40 segundos. Explicar el sistema y quién lo utiliza. La operación es consultar, no registrar. El entorno de prueba utiliza una cuenta ficticia; no representa una medición de carga real.}
+
+
+
+\begin{frame}[plain]
+\kgLienzo
+\node[anchor=west,font=\fontsize{11}{14}\selectfont\bfseries] at (.8,7.5) {Revisión Técnica Vehicular · Consulta REST};
+\node[anchor=west,font=\fontsize{28}{33}\selectfont\bfseries] at (.8,6.45) {¿En qué estado está mi turno?};
+\fill[kgMenta,rounded corners=11pt] (.8,3.25) rectangle (4.45,4.65);
+\fill[kgMenta,rounded corners=11pt] (6.05,3.25) rectangle (10.15,4.65);
+\fill[kgTinta,rounded corners=11pt] (11.45,2.9) rectangle (15.2,5.05);
+\draw[kgTinta,line width=1.3pt] (1.48,4.15) circle (.17);
+\draw[kgTinta,line width=1.3pt] (1.14,3.58) -- (1.14,3.7) arc (180:0:.34 and .28) -- (1.82,3.58) -- cycle;
+\node[anchor=west,font=\fontsize{14}{17}\selectfont\bfseries] at (2.05,3.95) {Solicitante};
+\foreach \y in {3.57,3.89,4.21}{\draw[kgTinta,line width=1.1pt,rounded corners=2pt] (6.42,\y) rectangle ++(.55,.22);\fill[kgTinta] (6.53,\y+.11) circle (.025);}
+\node[anchor=west,font=\fontsize{14}{17}\selectfont\bfseries] at (7.2,3.95) {Servicio RTV};
+\draw[->,kgTinta,line width=1.5pt] (4.45,3.95) -- (5.9,3.95);
+\node[font=\fontsize{14}{16}\selectfont\bfseries] at (5.16,4.38) {GET};
+\draw[->,kgTinta,line width=1.5pt] (10.15,3.95) -- (11.3,3.95);
+\node[anchor=west,text=white,font=\fontsize{11}{14}\selectfont] at (11.8,4.63) {Demo · 200 OK};
+\node[anchor=west,text=white,font=\fontsize{22}{25}\selectfont\bfseries] at (11.8,4.12) {Turno 82};
+\fill[kgMenta,rounded corners=8pt] (11.8,3.18) rectangle (14.85,3.76);
+\node[font=\fontsize{13}{16}\selectfont\bfseries] at (13.32,3.47) {GENERADO};
+\node[anchor=west,font=\fontsize{16}{20}\selectfont] at (.8,2.2) {GET devuelve el estado del turno sin modificarlo.};
+\kgPie{Solo el turno de la cuenta autenticada}
+\kgFin
+\note{25 segundos. Seguir las flechas: el solicitante hace un GET y el servicio devuelve una representación del turno. El ejemplo usa el turno 82 y el estado GENERADO de la demo real. El backend verifica la cuenta y su vínculo con el turno; conocer el identificador no concede acceso.}
 \end{frame}
 
-\begin{frame}{Arquitectura de consulta propuesta}
-\centering
-\begin{tikzpicture}[x=1cm,y=1cm,
-box/.style={draw=borde,fill=white,align=center,text=tinta,minimum width=3.55cm,minimum height=.76cm,font=\small},
-arr/.style={-{Stealth[length=1.8mm]},draw=acento,line width=.9pt},
-lab/.style={font=\scriptsize,text=gris,fill=fondo,inner sep=2pt,align=center}]
-\node[box] (staff) at (0,0) {Web del personal};
-\node[box] (back) at (4.9,0) {Backend RTV};
-\node[box] (main) at (9.8,0) {Base principal\\+ bandeja de salida};
-\node[box] (pub) at (9.8,-1.5) {Publicador de eventos};
-\node[box] (queue) at (4.9,-1.5) {Cola de mensajes};
-\node[box] (consume) at (0,-1.5) {Consumidor\\Control de ID y versión};
-\node[box] (client) at (0,-3.55) {App del solicitante};
-\node[box,fill=suave,draw=acento] (api) at (4.9,-3.55) {Servicio REST de consulta\\Identidad y autorización};
-\node[box] (read) at (9.8,-3.55) {Base de lectura\\Proyección de turnos};
-\draw[arr] (staff)--node[lab,above]{HTTP + JSON}(back);
-\draw[arr] (back)--node[lab,above]{Cambio + evento}(main);
-\draw[arr] (main)--node[lab,right]{Leer eventos}(pub);
-\draw[arr] (pub)--node[lab,above]{Publicar}(queue);
-\draw[arr] (queue)--node[lab,above]{Entregar}(consume);
-\draw[arr] (consume.south)--(0,-2.45)--node[lab,above]{Actualizar; ignorar duplicados y versiones antiguas}(9.8,-2.45)--(read.north);
-\draw[arr] ([yshift=5pt]client.east)--node[lab,above]{GET por ID}([yshift=5pt]api.west);
-\draw[arr] ([yshift=-7pt]api.west)--node[lab,below]{200 + JSON}([yshift=-7pt]client.east);
-\draw[arr] ([yshift=5pt]api.east)--node[lab,above]{Consultar}([yshift=5pt]read.west);
-\draw[arr] ([yshift=-7pt]read.west)--node[lab,below]{Datos}([yshift=-7pt]api.east);
-\end{tikzpicture}\par
-\vspace{3mm}
-\kgnota{La app no accede a las bases. La consulta mostraría la fecha de actualización.}
-\kgnota{La cola, el consumidor y la base separada son parte de la evolución propuesta.}
-\note{55 segundos. Seguir el flujo desde el backend hasta la base de lectura y luego la consulta REST. La bandeja de salida conserva cambio y evento en una misma transacción. La demo actual consulta el backend del RTV; estos componentes separados corresponden a la propuesta.}
+\begin{frame}[plain]
+\begin{tikzpicture}[remember picture,overlay]
+\node[inner sep=0pt] at (current page.center) {\includegraphics[width=.995\paperwidth,height=.995\paperheight,keepaspectratio]{../diagramas/kevin-rest.png}};
+\end{tikzpicture}
+\note{55 segundos. Mostrar el diagrama original completo de draw.io. El backend guardaría cambio y evento juntos. El publicador enviaría los eventos a la cola; el consumidor comprobaría ID y versión antes de actualizar la base de lectura. La API comprobaría identidad y autorización y devolvería el estado con su fecha de actualización. Estos componentes separados son una evolución futura. La demo actual consulta el backend del RTV mediante GET /api/consulta/turnos/82.}
 \end{frame}
 
-\begin{frame}[fragile]{Consulta probada en el RTV}
-\tema{GET /api/consulta/turnos/82}
-\begin{columns}[T,onlytextwidth]
-\begin{column}{.51\textwidth}
-{\color{acento}\Large\bfseries 200 OK}\par
-\begin{verbatim}
-{
-  "turnoId": 82,
-  "estado": "GENERADO",
-  "fechaInicio": "2026-11-20",
-  "fechaFin": null
-}
-\end{verbatim}
-\end{column}
-\begin{column}{.43\textwidth}
-\textbf{Solo el turno del solicitante}\par\medskip
-El backend comprueba el vínculo entre usuario, propietario y turno.\par\medskip
-\begin{tabular}{@{}ll@{}}
-\textcolor{acento}{\bfseries 404} & Turno ajeno o inexistente\\[2mm]
-\textcolor{acento}{\bfseries 401} & Sin sesión\\[2mm]
-\textcolor{acento}{\bfseries 403} & Ruta interna del personal
-\end{tabular}
-\end{column}
-\end{columns}
-\vspace{2mm}
-\kgnota{Cliente externo + Spring Boot + PostgreSQL. Las fechas del JSON corresponden al turno.}
-\note{50 segundos. Mostrar 200 para el turno propio 82 y 404 para el turno ajeno 22. La identidad se obtiene de la sesión: el cliente no elige al propietario. El 403 corresponde al solicitante que intenta entrar a una ruta del personal. La ruta /api/turnos/123 del diagrama original es ilustrativa.}
+
+
+\begin{frame}[plain]
+\kgLienzo
+\node[anchor=west,font=\fontsize{11}{14}\selectfont\bfseries] at (.8,7.75) {Ejercicio propio · Spring Boot y PostgreSQL};
+\node[anchor=west,font=\fontsize{24}{29}\selectfont\bfseries] at (.8,6.8) {Una consulta. Acceso comprobado.};
+\fill[kgTinta,rounded corners=11pt] (.8,1.8) rectangle (8.25,5.85);
+\node[anchor=north west,text=kgMenta,font=\fontsize{13}{17}\selectfont\ttfamily] at (1.15,5.47) {GET /api/consulta/turnos/82};
+\node[anchor=north west,text=white,font=\fontsize{11}{14}\selectfont\ttfamily,align=left] at (1.15,4.78) {\{\\\hspace{.3cm}"turnoId": 82,\\\hspace{.3cm}"estado": "GENERADO",\\\hspace{.3cm}"fechaInicio": "2026-11-20",\\\hspace{.3cm}"fechaFin": null\\\}};
+\fill[kgMenta,rounded corners=8pt] (8.75,4.25) rectangle (15.2,5.85);
+\node[anchor=west,font=\fontsize{24}{27}\selectfont\bfseries] at (9.1,5.25) {200};
+\node[anchor=west,font=\fontsize{13}{17}\selectfont] at (10.85,5.2) {Turno propio};
+\node[anchor=west,font=\fontsize{10}{13}\selectfont] at (9.1,4.65) {El backend devuelve los datos.};
+\fill[white,rounded corners=8pt] (8.75,2.35) rectangle (15.2,3.95);
+\node[anchor=west,font=\fontsize{24}{27}\selectfont\bfseries] at (9.1,3.36) {404};
+\node[anchor=west,font=\fontsize{13}{17}\selectfont] at (10.85,3.3) {Turno ajeno};
+\node[anchor=west,font=\fontsize{10}{13}\selectfont] at (9.1,2.75) {No expone datos de otro propietario.};
+\node[anchor=west,font=\fontsize{10}{13}\selectfont,text=kgGris] at (.8,1.2) {Sin sesión: 401. Ruta interna del personal: 403 para el solicitante.};
+\kgPie{Las fechas del JSON corresponden al turno}
+\kgFin
+\note{45 segundos. Mostrar el código que obtiene la identidad de la sesión y limita la consulta al propietario vinculado. Ejecutar turno propio 82, respuesta 200; después turno ajeno 22, respuesta 404. El cliente no elige al propietario. No leer cada campo del JSON.}
 \end{frame}
 
-\begin{frame}{Consistencia y manejo de fallos}
-\begin{columns}[T,onlytextwidth]
-\begin{column}{.47\textwidth}
-\tema{Durante una partición · CAP}
-La lectura podría continuar con datos anteriores si se interrumpe la propagación.\par\medskip
-La inspección esperaría si no puede confirmar el pago vigente.
-\end{column}
-\begin{column}{.47\textwidth}
-\tema{Sin partición · PACELC}
-Se aceptaría retraso de la lectura para evitar esperar cada actualización de la base principal.\par\medskip
-Si la API falla: informar y permitir reintentar.
-\end{column}
-\end{columns}
-\vspace{5mm}
-{\color{borde}\hrule}\medskip
-\kgnota{REST requiere definir peticiones y respuestas~\cite[sec.~3.2.1]{lercher_microservice_2024}. SOAP se consideraría si la integración exigiera WSDL.}
-\note{35 segundos. CAP y PACELC describen la arquitectura propuesta, no propiedades de REST. Continuar leyendo supone que el servicio y su base siguen accesibles. Para confirmar pagos se usa la información vigente del servicio responsable. Un resultado anterior se identifica con su fecha. No afirmar que REST es siempre más rápido que SOAP.}
+\begin{frame}[plain]
+\kgLienzo
+\node[anchor=west,font=\fontsize{11}{14}\selectfont\bfseries] at (.8,7.75) {Criterio de diseño · Arquitectura futura};
+\node[anchor=west,font=\fontsize{27}{31}\selectfont\bfseries] at (.8,6.8) {Informar no equivale a autorizar.};
+\fill[kgMenta,rounded corners=11pt] (.8,2.15) rectangle (7.65,5.8);
+\fill[kgTinta,rounded corners=11pt] (8.05,2.15) rectangle (15.2,5.8);
+\node[anchor=north west,font=\fontsize{14}{18}\selectfont\bfseries] at (1.15,5.4) {CAP · Con partición};
+\node[anchor=north west,text width=6cm,align=left,font=\fontsize{11.5}{15}\selectfont] at (1.15,4.64) {La consulta podría mostrar datos anteriores si su base sigue accesible.\\[3mm]Para autorizar una inspección, se confirma el pago vigente.};
+\node[anchor=north west,text=white,font=\fontsize{14}{18}\selectfont\bfseries] at (8.4,5.4) {PACELC · Sin partición};
+\node[anchor=north west,text=white,text width=6cm,align=left,font=\fontsize{11.5}{15}\selectfont] at (8.4,4.64) {Aceptaríamos un retraso de la copia para no esperar cada actualización.\\[3mm]Mostraríamos cuándo se actualizó el dato.};
+\node[anchor=west,font=\fontsize{11}{15}\selectfont] at (.8,1.55) {REST para consultar recursos; SOAP si el proveedor exige WSDL.};
+\node[anchor=west,font=\fontsize{8}{11}\selectfont,text=kgGris,text width=14.4cm] at (.8,.95) {Contrato de petición y respuesta: Lercher et al., 2024~\cite[sec.~3.2.1]{lercher_microservice_2024}.};
+\kgPie{CAP y PACELC describen la arquitectura, no el protocolo REST}
+\kgFin
+\note{30 segundos. La lectura informativa admite retraso identificado. Autorizar una inspección exige el pago vigente. CAP y PACELC analizan las copias y las decisiones de consistencia, no son propiedades de REST. Hoy se demuestran GET y permisos; la cola y la base de lectura son propuestas. Si la API no responde, se informa el fallo y se permite reintentar.}
 \end{frame}
+\endgroup

@@ -13,6 +13,11 @@ Desde \texttt{demos/juliana/}, ejecutar \texttt{node practica-soap.mjs}. Se util
 \end{itemize}
 Los XML de entrada y salida, el WSDL y los pasos están en \texttt{demos/juliana/}. Allí también está la captura de la ejecución en VS Code. El prototipo reconoce los dos mensajes de prueba. La validación general contra el esquema y la integración con el PFC quedan pendientes.
 
+\subsection{Comparación con Microsoft Places}
+Microsoft Places utiliza calendarios de recursos de Exchange para gestionar la disponibilidad de las salas y evitar conflictos de horario según la configuración~\cite{microsoft-places-salas-2026}. En el sistema de reservas de laboratorios, el prototipo SOAP comprueba los datos de dos solicitudes ficticias. El paso comparable en la aplicación sería consultar la agenda del laboratorio y comprobar solapamientos antes de confirmar el cupo.
+
+Para decidir la interfaz, la revisión de Kannan et al. identifica el contrato formal como uno de los motivos para mantener SOAP en determinadas integraciones~\cite{kannan-soap-rest-2026}. Usaríamos SOAP si el validador externo ofrece la operación mediante WSDL. Si el proveedor ofrece REST, revisaríamos el contrato de datos y el manejo de errores. En ambos casos la confirmación depende de la agenda de reservas.
+
 \subsection{Incidente externo propuesto para la comparación}
 El incidente de GitHub del 21 de octubre de 2018 es un caso candidato, sujeto a confirmación del docente. El desencadenante fue una interrupción de 43 segundos durante el reemplazo de equipo de red. La conmutación automática promovió bases primarias en otra región. Tras restablecerse el enlace, ambos centros tenían escrituras que el otro no tenía, lo que impidió volver de inmediato a la topología anterior. El equipo pausó tareas en segundo plano, restauró réplicas y verificó la replicación antes de reanudar el procesamiento. Entre las mitigaciones previstas, GitHub planteó limitar la promoción automática entre regiones~\cite{warner-github-incidente-2018}.
 
@@ -26,4 +31,4 @@ La aplicación a CLAB es conservar la solicitud como pendiente cuando se pierde 
 \end{enumerate}
 
 \subsection{Apoyo de inteligencia artificial}
-OpenAI Codex (GPT-6) apoyó la adaptación de las diapositivas, el prototipo, el diagrama y la redacción de estas notas. Juliana ejecutó la demo en su computadora y guardó la captura. Las referencias se contrastaron con las especificaciones del W3C y el informe original de GitHub.
+OpenAI Codex (GPT-6) apoyó la adaptación de las diapositivas, el prototipo, el diagrama y la redacción de estas notas. Juliana ejecutó la demo en su computadora y guardó la captura. Las referencias se contrastaron con las especificaciones del W3C, el informe original de GitHub, el artículo de Future Internet y la documentación de Microsoft.

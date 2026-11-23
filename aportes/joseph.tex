@@ -41,7 +41,7 @@
 \begin{columns}[T,onlytextwidth]
 \begin{column}{.48\textwidth}
 \textbf{WSDL}\\
-Describe la operación y los formatos de los mensajes.
+Describe la operación y los formatos de los mensajes \cite{kannan-soap-rest-2026}.
 \end{column}
 \begin{column}{.48\textwidth}
 \textbf{Resultado}\\
@@ -101,7 +101,7 @@ Apoya la revisión manual del documento; no aprueba automáticamente al postulan
 \end{columns}
 
 \medskip
-\kgnota{Nombres, campos y valores ficticios; un servicio real tendría que definirlos en su WSDL.}
+\kgnota{Nombres y valores ficticios. SOAP intercambia XML \cite{ayfan2024soap}.}
 \note{85 segundos. Recorrer la solicitud: el SSDC prepara un mensaje XML con los datos que exigiría el servicio. El proveedor procesaría la consulta y devolvería otro mensaje XML con el resultado. TEST-001 y VALIDO son valores de ejemplo, no datos ni respuestas de un proveedor real.}
 \end{frame}
 
@@ -138,3 +138,4 @@ la falta de respuesta no demuestra que el título sea inválido.
 \kgnota{Manejo propuesto; todavía no está implementado ni probado en el SSDC.}
 \note{60 segundos. Distinguir entre demora, fallo de conexión y SOAP Fault. En los dos primeros casos no se recibe una respuesta válida; en el tercero, el servicio sí responde con información del error. El SSDC informaría el problema y no marcaría el título como inválido por falta de respuesta.}
 \end{frame}
+

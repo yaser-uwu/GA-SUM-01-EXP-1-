@@ -6,22 +6,33 @@
 \IfFileExists{../referencias/referencias-juliana.bib}{\addbibresource{../referencias/referencias-juliana.bib}}{}
 \begin{document}
 \begingroup
-\setbeamercolor{background canvas}{bg=tinta}
-\setbeamercolor{normal text}{fg=white}
+\definecolor{portadaOscuro}{HTML}{003842}
+\definecolor{portadaClaro}{HTML}{FAF7F0}
+\definecolor{portadaMenta}{HTML}{AFF2D1}
+\setbeamercolor{background canvas}{bg=portadaOscuro}
+\setbeamercolor{normal text}{fg=portadaClaro}
 \begin{frame}[plain,noframenumbering]
-\vspace{5mm}
-{\color{suave}\small APLICACIONES DISTRIBUIDAS · GA-SUM-01 / EXP-1}\par
-\vspace{8mm}
-{\color{white}\fontsize{34}{38}\selectfont\bfseries Servicios web}\par
-\vspace{2mm}
-{\color{white}\fontsize{27}{31}\selectfont SOAP y REST}\par
-\vspace{5mm}
-{\color{suave}\large Aplicación a la evolución de nuestros PFC}\par
-\vfill
-{\color{white}\small\bfseries Grupo CCEG}\par\smallskip
-{\color{white}\footnotesize Kevin Leonel García Bazurto · Khriz Alexander Coronel Gomez\par
-Joseph Alexander Calderon Saltos · Juliana Romina Emanuel Pino}\par
-\vspace{5mm}
+\begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm,shift={(current page.south west)},every node/.style={inner sep=0pt,text=portadaClaro,font=\sffamily}]
+\node[anchor=west,font=\fontsize{12}{15}\selectfont] at (.85,8.15) {Aplicaciones Distribuidas · GA-SUM-01 / EXP-1};
+\node[anchor=west,font=\fontsize{29}{34}\selectfont\bfseries] at (.85,6.75) {Servicios web};
+\node[anchor=west,font=\fontsize{36}{43}\selectfont\bfseries] at (.85,5.6) {SOAP y REST};
+\node[anchor=west,font=\fontsize{13}{17}\selectfont] at (.9,4.75) {Aplicación en nuestros proyectos de fin de curso};
+\draw[portadaMenta,line width=9pt,line cap=butt,line join=miter] (11.72,6.94) -- (10.68,6.18) -- (11.72,5.42);
+\draw[portadaMenta,line width=9pt,line cap=butt,line join=miter] (13.63,6.94) -- (14.67,6.18) -- (13.63,5.42);
+\draw[portadaMenta,line width=9pt,line cap=butt] (12.17,5.13) -- (12.95,7.42);
+\draw[portadaMenta,line width=2pt,rounded corners=12pt] (10.35,4.36) rectangle (12.35,5.04);
+\node[text=portadaMenta,font=\fontsize{14}{18}\selectfont\bfseries] at (11.35,4.7) {HTTP};
+\draw[portadaMenta,line width=2.4pt,line cap=round] (12.35,4.7) -- (15.05,4.7);
+\draw[portadaMenta,line width=2.4pt,line cap=round,line join=round] (14.72,5.02) -- (15.05,4.7) -- (14.72,4.38);
+\draw[portadaMenta,line width=2pt] (.9,3.32) -- (3.6,3.32);
+\node[anchor=west,font=\fontsize{21}{25}\selectfont\bfseries] at (.9,2.76) {Grupo CCEG};
+\node[anchor=west,font=\fontsize{12}{16}\selectfont] at (.9,2.04) {Kevin Leonel García Bazurto};
+\node[anchor=west,font=\fontsize{12}{16}\selectfont] at (7.8,2.04) {Khriz Alexander Coronel Gómez};
+\node[anchor=west,font=\fontsize{12}{16}\selectfont] at (.9,1.39) {Joseph Alexander Calderón Saltos};
+\node[anchor=west,font=\fontsize{12}{16}\selectfont] at (7.8,1.39) {Juliana Romina Emanuel Pino};
+\node[font=\fontsize{12}{16}\selectfont] at (7.4,2.04) {·};
+\node[font=\fontsize{12}{16}\selectfont] at (7.4,1.39) {·};
+\end{tikzpicture}
 \end{frame}
 \endgroup
 \input{kevin.tex}
@@ -42,3 +53,4 @@ OpenAI Codex apoyó la demo REST, las pruebas, los diagramas, las notas y las fu
 OpenAI Codex (GPT-6) apoyó la adaptación de las diapositivas, la preparación de notas y la creación del diagrama digital. Las referencias se contrastaron con las especificaciones originales del W3C y el PDF se revisó visualmente.
 \end{frame}
 \end{document}
+
